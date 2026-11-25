@@ -1,12 +1,7 @@
 (() => {
 const $ = id => document.getElementById(id);
-const host = location.hostname.endsWith('.github.io');
-const REPO = {
-  owner: host ? location.hostname.split('.')[0] : 'kisshan2202',
-  name: host ? (location.pathname.split('/')[1] || 'oregano') : 'oregano',
-  branch: 'main'
-};
-const LS = { token: 'oregano-token', draft: 'oregano-draft' };
+const API = String(window.OREGANO_API || '').replace(/\/$/, '');
+const LS = { draft: 'oregano-draft' };
 const store = {
   get(k) { try { return localStorage.getItem(k); } catch { return null; } },
   set(k, v) { try { localStorage.setItem(k, v); return true; } catch { return false; } },
@@ -16,6 +11,7 @@ const store = {
 let data = null;        // live data (published or draft)
 let admin = false;
 let dirty = false;
+let deletes = new Set(); // published image files to remove on next Publish
 let editing = null;     // {sectionId, item|null}
 let pendingImage = undefined; // undefined = unchanged, '' = removed, 'data:' = new
 
@@ -207,12 +203,14 @@ dd.addEventListener('touchend', e => {
 /* ---------- draft handling ---------- */
 function markDirty() {
   dirty = true;
-  if (!store.set(LS.draft, JSON.stringify(data))) toast('Draft too large to save locally — publish soon.');
+  if (!store.set(LS.draft, JSON.stringify({ data, deletes: [...deletes] }))) toast('Draft too large to save locally — publish soon.');
   render();
 }
 const sectionOf = id => data.sections.find(s => s.id === id);
+const trackDelete = p => { if (p && p.startsWith('images/items/')) deletes.add(p); };
 function removeItem(sid, item) {
   if (!confirm(`Delete "${item.name}"?`)) return;
+  trackDelete(item.image);
   const s = sectionOf(sid); s.items = s.items.filter(i => i.id !== item.id); markDirty();
 }
 
@@ -251,98 +249,78 @@ $('edit-form').onsubmit = () => {
   const s = sectionOf(editing.sid);
   if (editing.item) {
     Object.assign(editing.item, vals);
-    if (pendingImage !== undefined) editing.item.image = pendingImage;
+    if (pendingImage !== undefined) { trackDelete(editing.item.image); editing.item.image = pendingImage; }
   } else s.items.push({ id: uid(), ...vals, image: pendingImage || '' });
   markDirty();
 };
 
-/* ---------- GitHub publishing ---------- */
-const api = (path, opts = {}) => fetch(`https://api.github.com/repos/${REPO.owner}/${REPO.name}/${path}`, {
-  ...opts, headers: { Authorization: 'Bearer ' + store.get(LS.token), Accept: 'application/vnd.github+json', 'Content-Type': 'application/json' }
-});
-const b64 = s => btoa(unescape(encodeURIComponent(s)));
-async function putFile(path, content, base64, message) {
-  let sha; const g = await api(`contents/${path}?ref=${REPO.branch}`);
-  if (g.ok) sha = (await g.json()).sha; else if (g.status !== 404) throw new Error('Could not read ' + path + ' (' + g.status + ')');
-  const r = await api(`contents/${path}`, { method: 'PUT', body: JSON.stringify({ message, content: base64 ? content : b64(content), branch: REPO.branch, ...(sha && { sha }) }) });
-  if (!r.ok) throw new Error('Could not write ' + path + ' (' + r.status + ')');
+/* ---------- admin service (login + publish) ---------- */
+const SES = 'oregano-session';
+const getSession = () => { try { const s = JSON.parse(sessionStorage.getItem(SES) || 'null'); return s && s.exp > Date.now() ? s.token : null; } catch { return null; } };
+const setSession = (token, hours) => { try { token ? sessionStorage.setItem(SES, JSON.stringify({ token, exp: Date.now() + (hours || 8) * 3600e3 - 60e3 })) : sessionStorage.removeItem(SES); } catch {} };
+const unlocked = () => !!getSession();
+async function call(path, body, token) {
+  let r;
+  try { r = await fetch(API + path, { method: 'POST', headers: { 'Content-Type': 'application/json', ...(token && { Authorization: 'Bearer ' + token }) }, body: JSON.stringify(body) }); }
+  catch { throw new Error('Could not reach the admin service.'); }
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) { const e = new Error(j.error || 'Request failed (' + r.status + ').'); e.status = r.status; throw e; }
+  return j;
 }
 async function publish() {
   const btn = $('btn-publish'); btn.disabled = true; btn.textContent = 'Publishing…';
   try {
-    const out = JSON.parse(JSON.stringify(data));
-    for (const s of out.sections) for (const i of s.items) {
-      if (i.image.startsWith('data:')) {
-        const path = `images/items/${i.id}-${Date.now().toString(36)}.jpg`;
-        await putFile(path, i.image.split(',')[1], true, `Add image for ${i.name}`);
-        i.image = path;
-      }
+    const out = JSON.parse(JSON.stringify(data)), images = [];
+    for (const s of out.sections) for (const i of s.items) if (i.image.startsWith('data:')) {
+      const path = `images/items/${i.id}-${Date.now().toString(36)}.jpg`;
+      images.push({ path, data: i.image.split(',')[1] }); i.image = path;
     }
-    out.updated = new Date().toLocaleString('en-AU', { month: 'long', year: 'numeric' });
-    await putFile('menu.json', JSON.stringify(out, null, 1) + '\n', false, 'Update menu');
-    data = out; dirty = false; store.del(LS.draft);
+    const keep = new Set(out.sections.flatMap(s => s.items.map(i => i.image)));
+    const res = await call('/publish', { menu: out, images, deletes: [...deletes].filter(p => !keep.has(p)) }, getSession());
+    out.updated = res.updated || out.updated;
+    data = out; dirty = false; deletes = new Set(); store.del(LS.draft);
     toast('Published! The live site updates in about a minute.');
-  } catch (e) { toast('Publish failed: ' + e.message); }
+  } catch (e) {
+    if (e.status === 401) { setSession(null); admin = false; toast('Session expired. Sign in again; your changes are kept as a draft.'); }
+    else toast('Publish failed: ' + e.message);
+  }
   btn.textContent = 'Publish'; render();
 }
 $('btn-publish').onclick = publish;
 $('btn-discard').onclick = async () => {
   if (!confirm('Discard all unpublished changes?')) return;
-  store.del(LS.draft); dirty = false; await load(true);
+  store.del(LS.draft); deletes = new Set(); dirty = false; await load(true);
 };
 
 /* ---------- admin sign-in ---------- */
-const login = $('login');
-async function verify(token) {
-  const r = await fetch(`https://api.github.com/repos/${REPO.owner}/${REPO.name}`, { headers: { Authorization: 'Bearer ' + token } });
-  if (!r.ok) throw new Error(r.status === 401 ? 'Token not accepted.' : 'Could not reach the repository (' + r.status + ').');
-  if (!(await r.json()).permissions?.push) throw new Error('This token cannot write to the repository.');
-}
-// Password gate. Only a salted PBKDF2 hash is stored here, never the password itself.
-// Note: this is a convenience lock for the admin screen; real write access is the GitHub token.
-const PW = { salt: '2cf4f6079230a93f8db0b862638f331f', hash: '1d27ae48486eda0c017327ec228217cf4aaf2860dfc939f75b9fcc2e0c7ec93d', iter: 150000 };
-const hex = b => [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, '0')).join('');
-const unhex = h => new Uint8Array(h.match(/../g).map(x => parseInt(x, 16)));
-async function pwOk(pw) {
-  const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(pw), 'PBKDF2', false, ['deriveBits']);
-  const bits = await crypto.subtle.deriveBits({ name: 'PBKDF2', hash: 'SHA-256', salt: unhex(PW.salt), iterations: PW.iter }, key, 256);
-  return hex(bits) === PW.hash;
-}
-const unlocked = () => { try { return sessionStorage.getItem('oregano-unlocked') === '1'; } catch { return false; } };
-const setUnlocked = v => { try { v ? sessionStorage.setItem('oregano-unlocked', '1') : sessionStorage.removeItem('oregano-unlocked'); } catch {} };
 const pwDlg = $('pw');
 function enterAdmin() { admin = true; render(); }
 function openLogin() {
+  if (!API) { toast('The admin service is not set up yet (see admin-service/README.md).'); return; }
   if (!unlocked()) { $('pw-err').textContent = ''; $('pw-input').value = ''; return pwDlg.showModal(); }
-  if (store.get(LS.token)) return enterAdmin();
-  $('login-err').textContent = ''; $('token').value = ''; login.showModal();
+  enterAdmin();
 }
 $('pw-cancel').onclick = () => pwDlg.close();
 $('pw-form').onsubmit = async e => {
   e.preventDefault();
   const btn = $('pw-go'); btn.disabled = true;
-  let ok = false; try { ok = await pwOk($('pw-input').value); } catch { $('pw-err').textContent = 'This browser cannot check passwords here (needs https).'; btn.disabled = false; return; }
-  if (ok) { setUnlocked(true); pwDlg.close(); btn.disabled = false; await load(); openLogin(); }
-  else { await new Promise(r => setTimeout(r, 1200)); $('pw-err').textContent = 'Wrong password.'; btn.disabled = false; }
+  try {
+    const r = await call('/login', { password: $('pw-input').value });
+    setSession(r.token, r.hours); pwDlg.close(); await load(); openLogin();
+  } catch (err) { $('pw-err').textContent = err.message; }
+  btn.disabled = false;
 };
 $('admin-link').onclick = e => { e.preventDefault(); openLogin(); };
-$('login-cancel').onclick = () => login.close();
-$('login-form').onsubmit = async e => {
-  const t = $('token').value.trim();
-  e.preventDefault();
-  try { await verify(t); store.set(LS.token, t); login.close(); enterAdmin(); }
-  catch (err) { $('login-err').textContent = err.message; }
-};
 $('btn-logout').onclick = () => {
   if (dirty && !confirm('You have unpublished changes (they stay saved as a draft). Exit anyway?')) return;
-  setUnlocked(false); admin = false; load(true);
+  setSession(null); admin = false; load(true);
 };
 
 /* ---------- load ---------- */
 async function load(ignoreDraft) {
   try {
     const draft = !ignoreDraft && store.get(LS.draft);
-    if (draft && store.get(LS.token) && unlocked()) { data = JSON.parse(draft); dirty = true; admin = true; }
+    if (draft && unlocked()) { const d = JSON.parse(draft); data = d.data || d; deletes = new Set(d.deletes || []); dirty = true; admin = true; }
     else {
       const r = await fetch('menu.json?v=' + Date.now()); if (!r.ok) throw 0;
       data = await r.json();

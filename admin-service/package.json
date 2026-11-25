@@ -1,0 +1,9 @@
+{
+  "name": "oregano-admin",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Admin service for Oregano's site: password login + commits menu changes to GitHub",
+  "main": "server.js",
+  "scripts": { "start": "node server.js" },
+  "engines": { "node": ">=20" }
+}
