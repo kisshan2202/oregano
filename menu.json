@@ -272,14 +272,14 @@
     {
      "id": "i037",
      "name": "Plain Croissant",
-     "price": "44",
+     "price": "5.00",
      "desc": "",
      "image": "images/items/sweets-plain-croissant.jpg"
     },
     {
      "id": "i038",
      "name": "Almond Croissant",
-     "price": "6.50",
+     "price": "7.0",
      "desc": "",
      "image": "images/items/sweets-almond-croissant.jpg"
     },
