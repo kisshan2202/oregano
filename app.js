@@ -223,27 +223,77 @@ function previewNode(name, image) {
 }
 function openEditor(sid, item) {
   editing = { sid, item }; pendingImage = undefined;
+  closeCropper();
   $('edit-title').textContent = item ? 'Edit item' : 'Add item';
   $('f-name').value = item?.name || ''; $('f-price').value = item?.price || ''; $('f-desc').value = item?.desc || '';
   $('f-image').value = ''; $('f-delete').style.display = item ? '' : 'none';
   previewNode(item?.name, item?.image); dlg.showModal();
 }
-async function shrink(file) {
-  const url = URL.createObjectURL(file);
-  const img = await new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = url; });
-  const max = 900, k = Math.min(1, max / Math.max(img.width, img.height));
-  const c = document.createElement('canvas'); c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
-  c.getContext('2d').drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(url);
-  return c.toDataURL('image/jpeg', .82);
+/* photo cropper: choose which part of the photo shows in the 4:3 box, then resize */
+const CW = 640, CH = 480, BG = '#fffaf2';
+const cc = $('crop-canvas'), cctx = cc.getContext('2d');
+let crop = null; // { img, url, s, ox, oy, min, max }
+const coverScale = () => Math.max(CW / crop.img.width, CH / crop.img.height);
+const containScale = () => Math.min(CW / crop.img.width, CH / crop.img.height);
+function clampCrop() {
+  const w = crop.img.width * crop.s, h = crop.img.height * crop.s;
+  crop.ox = w >= CW ? Math.min(0, Math.max(CW - w, crop.ox)) : Math.min(CW - w, Math.max(0, crop.ox));
+  crop.oy = h >= CH ? Math.min(0, Math.max(CH - h, crop.oy)) : Math.min(CH - h, Math.max(0, crop.oy));
+}
+function drawCrop() {
+  cctx.fillStyle = BG; cctx.fillRect(0, 0, CW, CH);
+  cctx.drawImage(crop.img, crop.ox, crop.oy, crop.img.width * crop.s, crop.img.height * crop.s);
+  cctx.strokeStyle = 'rgba(255,255,255,.45)'; cctx.lineWidth = 1; cctx.beginPath();
+  for (let k = 1; k < 3; k++) { cctx.moveTo(CW * k / 3, 0); cctx.lineTo(CW * k / 3, CH); cctx.moveTo(0, CH * k / 3); cctx.lineTo(CW, CH * k / 3); }
+  cctx.stroke();
+  $('crop-zoom').value = Math.round(100 * (crop.s - crop.min) / (crop.max - crop.min));
+}
+function setScale(s, px = CW / 2, py = CH / 2) {
+  s = Math.min(crop.max, Math.max(crop.min, s));
+  crop.ox = px - (px - crop.ox) * s / crop.s; crop.oy = py - (py - crop.oy) * s / crop.s; crop.s = s;
+  clampCrop(); drawCrop();
+}
+function centerAt(s) { crop.s = s; crop.ox = (CW - crop.img.width * s) / 2; crop.oy = (CH - crop.img.height * s) / 2; clampCrop(); drawCrop(); }
+function closeCropper() {
+  if (crop) URL.revokeObjectURL(crop.url);
+  crop = null; $('cropper').hidden = true; $('f-image').value = '';
 }
 $('f-image').onchange = async e => {
   const f = e.target.files[0]; if (!f) return;
-  try { pendingImage = await shrink(f); previewNode($('f-name').value, pendingImage); } catch { toast('Could not read that image.'); }
+  const url = URL.createObjectURL(f);
+  try {
+    const img = await new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = url; });
+    if (crop) URL.revokeObjectURL(crop.url);
+    crop = { img, url, s: 1, ox: 0, oy: 0 };
+    crop.min = Math.min(containScale(), coverScale()); crop.max = coverScale() * 4;
+    $('cropper').hidden = false; centerAt(coverScale());
+  } catch { URL.revokeObjectURL(url); toast('Could not read that image.'); $('f-image').value = ''; }
 };
-$('f-clear').onclick = () => { pendingImage = ''; $('f-image').value = ''; previewNode($('f-name').value, ''); };
-$('f-cancel').onclick = () => dlg.close();
+$('crop-zoom').oninput = e => setScale(crop.min + (crop.max - crop.min) * e.target.value / 100);
+$('crop-fill').onclick = () => crop && centerAt(coverScale());
+$('crop-fit').onclick = () => crop && centerAt(containScale());
+$('crop-cancel').onclick = closeCropper;
+let drag = null;
+const pt = e => { const r = cc.getBoundingClientRect(); return { x: (e.clientX - r.left) * CW / r.width, y: (e.clientY - r.top) * CH / r.height }; };
+cc.addEventListener('pointerdown', e => { if (!crop) return; cc.setPointerCapture(e.pointerId); const p = pt(e); drag = { x: p.x, y: p.y, ox: crop.ox, oy: crop.oy }; });
+cc.addEventListener('pointermove', e => { if (!drag) return; const p = pt(e); crop.ox = drag.ox + p.x - drag.x; crop.oy = drag.oy + p.y - drag.y; clampCrop(); drawCrop(); });
+['pointerup', 'pointercancel'].forEach(ev => cc.addEventListener(ev, () => { drag = null; }));
+cc.addEventListener('wheel', e => { if (!crop) return; e.preventDefault(); const p = pt(e); setScale(crop.s * (e.deltaY < 0 ? 1.08 : 1 / 1.08), p.x, p.y); }, { passive: false });
+function applyCrop() {
+  const W = Number($('crop-size').value), H = Math.round(W * CH / CW), k = W / CW;
+  const out = document.createElement('canvas'); out.width = W; out.height = H;
+  const c = out.getContext('2d'); c.fillStyle = BG; c.fillRect(0, 0, W, H);
+  c.drawImage(crop.img, crop.ox * k, crop.oy * k, crop.img.width * crop.s * k, crop.img.height * crop.s * k);
+  let q = .86, data = out.toDataURL('image/jpeg', q);
+  while (data.length * .75 > 700 * 1024 && q > .4) { q -= .08; data = out.toDataURL('image/jpeg', q); }
+  pendingImage = data; previewNode($('f-name').value, pendingImage); closeCropper();
+}
+$('crop-apply').onclick = applyCrop;
+$('f-clear').onclick = () => { closeCropper(); pendingImage = ''; $('f-image').value = ''; previewNode($('f-name').value, ''); };
+$('f-cancel').onclick = () => { closeCropper(); dlg.close(); };
 $('f-delete').onclick = () => { dlg.close(); removeItem(editing.sid, editing.item); };
 $('edit-form').onsubmit = () => {
+  if (crop) applyCrop(); // photo still being framed: use the current framing
   const name = $('f-name').value.trim(); if (!name) return;
   const vals = { name, price: $('f-price').value.trim().replace(/^\$/, ''), desc: $('f-desc').value.trim() };
   const s = sectionOf(editing.sid);

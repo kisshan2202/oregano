@@ -158,3 +158,15 @@ dialog .actions{display:flex;gap:8px;margin-top:16px;align-items:center}
   #detail[open]{animation:dsheet .35s cubic-bezier(.2,.9,.3,1)}
   @keyframes dsheet{from{opacity:0;transform:translateY(60px)}to{opacity:1;transform:none}}
 }
+
+/* photo cropper */
+#cropper{margin:10px 0;padding:10px;border:1px solid var(--line);border-radius:12px;background:var(--bg)}
+#crop-canvas{display:block;width:100%;height:auto;border-radius:8px;touch-action:none;cursor:grab;background:#fffaf2}
+#crop-canvas:active{cursor:grabbing}
+.crop-hint{margin:8px 0 0;font-size:13px;color:var(--muted)}
+.crop-controls{margin-top:8px;display:flex;flex-direction:column;gap:10px}
+.crop-controls label{display:flex;align-items:center;gap:8px;margin:0;font-size:14px;color:var(--muted)}
+dialog #crop-zoom{flex:1;width:auto;margin:0;padding:0;border:0;background:none;accent-color:var(--accent);min-height:32px}
+.crop-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.crop-row button{min-height:40px}
+dialog #crop-size{width:auto;margin:0;padding:8px;border-radius:8px;border:1px solid var(--line);background:var(--bg2);color:var(--ink);font:inherit}

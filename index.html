@@ -55,6 +55,19 @@
     <label>Price (AUD, leave blank for none)<input id="f-price" inputmode="decimal" maxlength="12"></label>
     <label>Description<textarea id="f-desc" rows="3" maxlength="300"></textarea></label>
     <label>Image<input id="f-image" type="file" accept="image/*"></label>
+    <div id="cropper" hidden>
+      <canvas id="crop-canvas" width="640" height="480"></canvas>
+      <p class="crop-hint">Drag the photo to choose the part to show. Zoom to resize it.</p>
+      <div class="crop-controls">
+        <label>Zoom <input type="range" id="crop-zoom" min="0" max="100" value="0" aria-label="Zoom"></label>
+        <div class="crop-row">
+          <button type="button" class="ghost" id="crop-fill">Fill frame</button>
+          <button type="button" class="ghost" id="crop-fit">Fit whole photo</button>
+          <label>Size <select id="crop-size"><option value="600">Small</option><option value="900" selected>Medium</option><option value="1200">Large</option></select></label>
+        </div>
+        <div class="actions"><button type="button" class="ghost" id="crop-cancel">Cancel photo</button><span class="spacer"></span><button type="button" id="crop-apply">Use this photo</button></div>
+      </div>
+    </div>
     <div class="preview"><div id="f-preview"></div><button type="button" class="ghost" id="f-clear">Remove image</button></div>
     <div class="actions"><button type="button" class="ghost danger" id="f-delete">Delete</button><span class="spacer"></span><button type="button" class="ghost" id="f-cancel">Cancel</button><button>Save</button></div>
   </form>
