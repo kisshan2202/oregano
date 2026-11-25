@@ -198,11 +198,33 @@ async function verify(token) {
   if (!r.ok) throw new Error(r.status === 401 ? 'Token not accepted.' : 'Could not reach the repository (' + r.status + ').');
   if (!(await r.json()).permissions?.push) throw new Error('This token cannot write to the repository.');
 }
+// Password gate. Only a salted PBKDF2 hash is stored here, never the password itself.
+// Note: this is a convenience lock for the admin screen; real write access is the GitHub token.
+const PW = { salt: '2cf4f6079230a93f8db0b862638f331f', hash: '1d27ae48486eda0c017327ec228217cf4aaf2860dfc939f75b9fcc2e0c7ec93d', iter: 150000 };
+const hex = b => [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, '0')).join('');
+const unhex = h => new Uint8Array(h.match(/../g).map(x => parseInt(x, 16)));
+async function pwOk(pw) {
+  const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(pw), 'PBKDF2', false, ['deriveBits']);
+  const bits = await crypto.subtle.deriveBits({ name: 'PBKDF2', hash: 'SHA-256', salt: unhex(PW.salt), iterations: PW.iter }, key, 256);
+  return hex(bits) === PW.hash;
+}
+const unlocked = () => { try { return sessionStorage.getItem('oregano-unlocked') === '1'; } catch { return false; } };
+const setUnlocked = v => { try { v ? sessionStorage.setItem('oregano-unlocked', '1') : sessionStorage.removeItem('oregano-unlocked'); } catch {} };
+const pwDlg = $('pw');
 function enterAdmin() { admin = true; render(); }
 function openLogin() {
+  if (!unlocked()) { $('pw-err').textContent = ''; $('pw-input').value = ''; return pwDlg.showModal(); }
   if (store.get(LS.token)) return enterAdmin();
   $('login-err').textContent = ''; $('token').value = ''; login.showModal();
 }
+$('pw-cancel').onclick = () => pwDlg.close();
+$('pw-form').onsubmit = async e => {
+  e.preventDefault();
+  const btn = $('pw-go'); btn.disabled = true;
+  let ok = false; try { ok = await pwOk($('pw-input').value); } catch { $('pw-err').textContent = 'This browser cannot check passwords here (needs https).'; btn.disabled = false; return; }
+  if (ok) { setUnlocked(true); pwDlg.close(); btn.disabled = false; await load(); openLogin(); }
+  else { await new Promise(r => setTimeout(r, 1200)); $('pw-err').textContent = 'Wrong password.'; btn.disabled = false; }
+};
 $('admin-link').onclick = e => { e.preventDefault(); openLogin(); };
 $('login-cancel').onclick = () => login.close();
 $('login-form').onsubmit = async e => {
@@ -213,14 +235,14 @@ $('login-form').onsubmit = async e => {
 };
 $('btn-logout').onclick = () => {
   if (dirty && !confirm('You have unpublished changes (they stay saved as a draft). Exit anyway?')) return;
-  store.del(LS.token); admin = false; render();
+  setUnlocked(false); admin = false; load(true);
 };
 
 /* ---------- load ---------- */
 async function load(ignoreDraft) {
   try {
     const draft = !ignoreDraft && store.get(LS.draft);
-    if (draft && store.get(LS.token)) { data = JSON.parse(draft); dirty = true; admin = true; }
+    if (draft && store.get(LS.token) && unlocked()) { data = JSON.parse(draft); dirty = true; admin = true; }
     else {
       const r = await fetch('menu.json?v=' + Date.now()); if (!r.ok) throw 0;
       data = await r.json();
