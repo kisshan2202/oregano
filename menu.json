@@ -1,5 +1,5 @@
 {
- "updated": "May 2026",
+ "updated": "November 2026",
  "sections": [
   {
    "id": "bakery",
@@ -272,7 +272,7 @@
     {
      "id": "i037",
      "name": "Plain Croissant",
-     "price": "4.50",
+     "price": "44",
      "desc": "",
      "image": "images/items/sweets-plain-croissant.jpg"
     },
