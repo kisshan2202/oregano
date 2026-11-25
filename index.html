@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Oregano's Bakehouse &amp; Cafe – Wollert</title>
+<meta name="description" content="Oregano's Bakehouse & Cafe in Wollert: fresh zaatar manoush, pizzas, pockets, sweets and coffee.">
+<style>
+:root{--bg:#5c4841;--bg2:#4a352c;--ink:#fff7ec;--muted:#e3d2bf;--accent:#e8c27a;--line:rgba(255,247,236,.28)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+header{text-align:center;padding:48px 16px 24px}
+.logo{margin:0}
+.logo img{display:block;margin:0 auto;width:min(380px,80vw);height:auto}
+.sub{font-size:12px;letter-spacing:.25em;text-transform:uppercase;color:var(--muted);margin-top:6px}
+nav{position:sticky;top:0;background:var(--bg2);display:flex;gap:6px;overflow-x:auto;padding:10px 16px;justify-content:center;z-index:2}
+nav a{color:var(--ink);text-decoration:none;padding:6px 14px;border:1px solid var(--line);border-radius:99px;white-space:nowrap;font-size:14px}
+nav a:hover{background:var(--accent);color:#2b1d17}
+main{max-width:1000px;margin:0 auto;padding:8px 16px 48px}
+section{margin-top:40px}
+h2{font:700 28px Georgia,serif;letter-spacing:.06em;text-transform:uppercase;text-align:center;margin:0 0 6px}
+h2::after{content:"";display:block;height:1px;background:var(--line);margin:10px 0 18px}
+.note{text-align:center;color:var(--accent);margin:-8px 0 18px;font-weight:600}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:4px 48px}
+@media(max-width:700px){.grid{grid-template-columns:1fr}}
+.item{padding:9px 0;border-bottom:1px solid rgba(255,247,236,.1)}
+.row{display:flex;justify-content:space-between;gap:12px;font-weight:700}
+.price{color:var(--accent);white-space:nowrap}
+.desc{color:var(--muted);font-size:14px;margin-top:2px}
+.pills{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:8px}
+.pills span{border:1px solid var(--line);padding:4px 14px;border-radius:99px;font-size:14px}
+footer{text-align:center;color:var(--muted);font-size:13px;padding:24px 16px 40px;border-top:1px solid var(--line)}
+</style>
+</head>
+<body>
+<header>
+  <h1 class="logo"><img src="images/oreganos-logo-transparent.svg" width="651" height="307" alt="Oregano’s Bakehouse &amp; Cafe"></h1>
+  <div class="sub">Wollert</div>
+</header>
+<nav>
+  <a href="#bakery">Bakery</a><a href="#pizza">Pizza</a><a href="#sweets">Sweets</a><a href="#drinks">Drinks</a>
+</nav>
+<main>
+<section id="bakery"><h2>Bakery Menu</h2><div class="grid" id="bakery-grid"></div></section>
+<section id="pizza"><h2>Pizza 11"</h2><p class="note">All pizzas $15.90</p><div class="grid" id="pizza-grid"></div></section>
+<section id="sweets"><h2>Sweets</h2><div class="grid" id="sweets-grid"></div></section>
+<section id="drinks"><h2>Coffee</h2><div class="grid" id="coffee-grid"></div>
+  <h2 style="margin-top:36px">Iced Drinks · $8.50</h2>
+  <div class="pills"><span>Iced Chocolate</span><span>Iced Coffee</span><span>Iced Mocha</span></div>
+  <h2 style="margin-top:36px">Milkshakes · $7.50</h2>
+  <div class="pills"><span>Chocolate</span><span>Strawberry</span><span>Vanilla</span><span>Blue Haven</span><span>Banana</span><span>Caramel</span></div>
+</section>
+</main>
+<footer>Menu as of May 2026 · Prices in AUD and subject to change</footer>
+<script>
+const bakery=[
+["Zaatar","3.50"],["Zaatar Pillow","4.00"],["Zaatar & Cheese","6.50"],
+["Zaatar Veggie Wrap","7.00","kalamata olives, red onion, tomato & capsicum"],
+["Zaatar Labne Wrap","8.00","labne, kalamata olives, tomato & cucumber"],
+["Zaatar Special","8.00","baby spinach, tomato, red onion & avocado"],
+["Zaatar Special Chicken & Cheese","15.00","baby spinach, tomato, red onion, avocado, tandoori chicken & halloumi cheese"],
+["Meat Manoush","7.00"],["Meat & Cheese","8.50"],["Cheese Pie","7.00"],["Open Cheese","8.00"],
+["JR's Special","12.50","meat, cheese sujuk & BBQ sauce"],
+["Shanklish Boat","8.00","fermented cheese, tomato & onion"],
+["Halloumi Hotdog","4.50","hotdog & halloumi cheese"],
+["Spinach & Cheese Triangle","7.00","baby spinach & halloumi/feta/mozzarella"],
+["Spinach & Sumac Triangle","6.00","baby spinach, onion, sumac & lemon"],
+["Muhummara","5.50","capsicum & tomato paste"],["Muhummara & Cheese","7.50"],
+["Cheese Bagel","7.50","sesame bagel with sliced halloumi cheese"],
+["Cheese & Veggie Bagel","9.00","sesame bagel with sliced halloumi cheese, capsicum, tomato & olives"],
+["Chicken Pocket","8.00","tandoori chicken, mushroom & halloumi cheese"],
+["Veggie Pocket","8.00","tomato, capsicum, olives, red onion & halloumi cheese"],
+["Sujuk Pocket","8.00","sujuk, tomato, capsicum, olives & halloumi cheese"],
+["Brekky Pocket","9.00","sujuk, egg & halloumi cheese"],
+["Mega Pocket","11.00","sujuk, chicken, mushroom, BBQ sauce, halloumi & mozzarella"]];
+const pizza=[
+["Margherita","tomato paste, halloumi & mozzarella cheese"],
+["Zaatar Gourmet","zaatar base, baby spinach, sundried tomato, capsicum, red onion, mushroom & feta cheese"],
+["Garlic & Cheese","garlic paste, halloumi & mozzarella cheese"],
+["Triple Cheese","feta, halloumi & mozzarella cheese"],
+["Labne","labne, tomato, cucumber, olives, mint & olive oil"],
+["Meat With The Lot","meat base, capsicum, tomato, olives, red onion, mushroom, mozzarella & halloumi cheese"],
+["Chicken","tandoori chicken, mushroom, mozzarella & halloumi cheese"],
+["Sujuk","sujuk, capsicum, olives, tomato, mozzarella & halloumi cheese"],
+["Vegetarian","capsicum, olives, tomato, red onion, mozzarella & halloumi cheese"],
+["Shanklish","fermented cheese, tomato & onion"],
+["Zaatar and Cheese Focaccia","double stacked zaatar pizza with halloumi & mozzarella cheese filling"]];
+const sweets=[["Plain Croissant","4.50"],["Almond Croissant","6.50"],["Halloumi Croissant","8.50"],["Nutella Croissant","8.50"],
+["Nutella Slice","3.50"],["Biscoff Slice","3.50"],["Pistachio Slice","3.50"],["Muffins","4.50"],["Cookies","7.00"],
+["Nutella Flower (pre-order)","25.00"],["Biscoff Flower (pre-order)","25.00"],["Pistachio Flower (pre-order)","25.00"],["Vegemite Flower (pre-order)","25.00"],
+["Nutella Pizza","15.90"],["Biscoff Pizza","15.90"],["Slices","6.00"]];
+const coffee=[["Small","4.50"],["Medium","5.50"],["Large","6.50"],
+["Alternative milk","1.00","almond, soy, oat, lactose free"],["Extras","1.00","honey, white chocolate, extra shot, etc."]];
+const esc=s=>s.replace(/&/g,"&amp;").replace(/</g,"&lt;");
+function render(id,list){document.getElementById(id).innerHTML=list.map(([n,p,d])=>
+ `<div class="item"><div class="row"><span>${esc(n)}</span>${p?`<span class="price">$${p}</span>`:""}</div>${d?`<div class="desc">${esc(d)}</div>`:""}</div>`).join("")}
+render("bakery-grid",bakery);
+render("pizza-grid",pizza.map(([n,d])=>[n,"",d]));
+render("sweets-grid",sweets);render("coffee-grid",coffee);
+</script>
+</body>
+</html>
