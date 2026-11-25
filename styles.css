@@ -17,7 +17,7 @@ button:disabled{opacity:.5;cursor:default}
 /* animated showcase strip */
 .showcase{padding:20px 0 28px}
 .marquee{overflow:hidden;mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);-webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
-.track{display:flex;align-items:flex-start;gap:16px;width:max-content;animation:scroll var(--dur,60s) linear infinite}
+.track{display:flex;align-items:stretch;gap:16px;width:max-content;animation:scroll var(--dur,60s) linear infinite}
 .marquee:hover .track{animation-play-state:paused}
 .track .card{width:210px;flex:none}
 @keyframes scroll{to{transform:translateX(calc(-50% - 8px))}}
@@ -170,3 +170,7 @@ dialog #crop-zoom{flex:1;width:auto;margin:0;padding:0;border:0;background:none;
 .crop-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .crop-row button{min-height:40px}
 dialog #crop-size{width:auto;margin:0;padding:8px;border-radius:8px;border:1px solid var(--line);background:var(--bg2);color:var(--ink);font:inherit}
+
+/* showcase strip: equal-height cards, names limited to two lines */
+.track .card .row>span:first-child{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.track .card .body{min-height:3.6em}

@@ -36,14 +36,14 @@ function placeholder(name) {
   const p = el('div', 'ph', (name.trim()[0] || '?').toUpperCase());
   p.style.setProperty('--h', hue(name)); return p;
 }
-function card(item, sectionId, withAdmin) {
+function card(item, sectionId, withAdmin, compact) {
   const c = el('article', 'card');
   c.append(imageNode(item));
   const b = el('div', 'body'), r = el('div', 'row');
   r.append(el('span', null, item.name));
   if (fmt(item.price)) r.append(el('span', 'price', fmt(item.price)));
   b.append(r);
-  if (item.desc) b.append(el('div', 'desc', item.desc));
+  if (item.desc && !compact) b.append(el('div', 'desc', item.desc));
   c.append(b);
   c.tabIndex = 0; c.setAttribute('role', 'button'); c.setAttribute('aria-label', 'View ' + item.name);
   c.onclick = () => openDetail(item);
@@ -116,7 +116,7 @@ function render() {
   if (pool.length < 6) pool = all;
   const picks = pool.slice().sort(() => 0.5 - Math.random()).slice(0, 14);
   const track = $('track'); track.replaceChildren();
-  [...picks, ...picks].forEach(i => track.append(card(i, null, false)));
+  [...picks, ...picks].forEach(i => track.append(card(i, null, false, true)));
   track.style.setProperty('--dur', Math.max(30, picks.length * 5) + 's');
 
   // nav
