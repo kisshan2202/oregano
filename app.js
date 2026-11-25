@@ -49,10 +49,13 @@ function card(item, sectionId, withAdmin) {
   b.append(r);
   if (item.desc) b.append(el('div', 'desc', item.desc));
   c.append(b);
+  c.tabIndex = 0; c.setAttribute('role', 'button'); c.setAttribute('aria-label', 'View ' + item.name);
+  c.onclick = () => openDetail(item);
+  c.onkeydown = ev => { if (ev.target === c && (ev.key === 'Enter' || ev.key === ' ')) { ev.preventDefault(); openDetail(item); } };
   if (withAdmin) {
     const t = el('div', 'editbtns');
-    const e = el('button', null, 'Edit'); e.onclick = () => openEditor(sectionId, item);
-    const d = el('button', 'del', '✕'); d.title = 'Delete'; d.onclick = () => removeItem(sectionId, item);
+    const e = el('button', null, 'Edit'); e.onclick = ev => { ev.stopPropagation(); openEditor(sectionId, item); };
+    const d = el('button', 'del', '✕'); d.title = 'Delete'; d.onclick = ev => { ev.stopPropagation(); removeItem(sectionId, item); };
     t.append(e, d); c.append(t);
   }
   return c;
@@ -103,6 +106,48 @@ function observe() {
     io ? io.observe(c) : c.classList.add('in');
   });
 }
+
+/* ---------- item detail popup ---------- */
+const dd = $('detail'); let dCtx = null, dClosing = false;
+function openDetail(item) {
+  const sec = data.sections.find(s => s.items.some(i => i.id === item.id)); if (!sec) return;
+  dCtx = { list: sec.items, idx: sec.items.findIndex(i => i.id === item.id), title: sec.title };
+  dClosing = false; dd.classList.remove('closing'); fillDetail(0); dd.showModal();
+}
+function fillDetail(dir) {
+  const it = dCtx.list[dCtx.idx], n = dCtx.list.length;
+  $('d-img').replaceChildren(imageNode(it));
+  $('d-sec').textContent = dCtx.title;
+  $('d-name').textContent = it.name;
+  $('d-price').textContent = fmt(it.price); $('d-price').hidden = !fmt(it.price);
+  $('d-desc').textContent = it.desc || ''; $('d-desc').hidden = !it.desc;
+  $('d-count').textContent = `${dCtx.idx + 1} / ${n}`;
+  $('d-prev').hidden = $('d-next').hidden = n < 2;
+  dd.style.setProperty('--dx', dir * 70 + 'px');
+  dd.classList.remove('swap'); void dd.offsetWidth; dd.classList.add('swap');
+}
+function stepDetail(d) { const n = dCtx.list.length; dCtx.idx = (dCtx.idx + d + n) % n; fillDetail(d); }
+function closeDetail() {
+  if (dClosing || !dd.open) return; dClosing = true; dd.classList.add('closing');
+  setTimeout(() => { dd.close(); dd.classList.remove('closing'); dClosing = false; }, 220);
+}
+$('d-close').onclick = closeDetail;
+$('d-prev').onclick = () => stepDetail(-1);
+$('d-next').onclick = () => stepDetail(1);
+dd.addEventListener('cancel', e => { e.preventDefault(); closeDetail(); });
+dd.addEventListener('click', e => {
+  const r = dd.getBoundingClientRect();
+  if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) closeDetail();
+});
+dd.addEventListener('keydown', e => {
+  if (e.key === 'ArrowLeft') stepDetail(-1); else if (e.key === 'ArrowRight') stepDetail(1);
+});
+let tx = null;
+dd.addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, { passive: true });
+dd.addEventListener('touchend', e => {
+  if (tx == null) return; const dx = e.changedTouches[0].clientX - tx; tx = null;
+  if (Math.abs(dx) > 50) stepDetail(dx < 0 ? 1 : -1);
+});
 
 /* ---------- draft handling ---------- */
 function markDirty() {
