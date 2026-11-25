@@ -65,6 +65,22 @@
   </form>
 </dialog>
 
+<dialog id="detail" aria-label="Item details">
+  <button class="d-close" id="d-close" aria-label="Close">✕</button>
+  <div class="d-imgwrap">
+    <div class="d-img" id="d-img"></div>
+    <button class="d-nav prev" id="d-prev" aria-label="Previous item">‹</button>
+    <button class="d-nav next" id="d-next" aria-label="Next item">›</button>
+  </div>
+  <div class="d-body">
+    <div class="d-sec" id="d-sec"></div>
+    <h3 id="d-name"></h3>
+    <div class="d-price" id="d-price"></div>
+    <p id="d-desc"></p>
+    <div class="d-count" id="d-count"></div>
+  </div>
+</dialog>
+
 <div id="toast" role="status" aria-live="polite"></div>
 <script src="app.js"></script>
 </body>
