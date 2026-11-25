@@ -60,7 +60,60 @@ function card(item, sectionId, withAdmin) {
   }
   return c;
 }
+/* ---------- about us ---------- */
+const DEFAULT_ABOUT = { locations: [
+  { name: 'Wollert', address: '4B Linfield Parade, Wollert VIC 3750', hours: '' },
+  { name: 'Epping', address: 'Shop 3/299 Harvest Home Rd, Epping VIC 3076', hours: '' }
+] };
+function renderAbout() {
+  const root = $('about'); root.replaceChildren();
+  root.append(el('h2', null, 'About us'));
+  root.append(el('p', 'about-intro', 'Visit Oregano’s Bakehouse & Cafe at either of our two locations.'));
+  if (admin) { const b = el('button', 'ghost', 'Edit locations & hours'); b.onclick = openAboutEditor; const w = el('div', 'addrow'); w.append(b); root.append(w); }
+  const grid = el('div', 'locs');
+  data.about.locations.forEach(l => {
+    const c = el('article', 'loc');
+    const map = document.createElement('iframe');
+    map.src = 'https://www.google.com/maps?q=' + encodeURIComponent(l.address) + '&output=embed';
+    map.loading = 'lazy'; map.title = 'Map of Oregano’s ' + l.name; map.referrerPolicy = 'no-referrer-when-downgrade';
+    const body = el('div', 'loc-body');
+    body.append(el('h3', null, l.name), el('p', 'addr', l.address));
+    const hrs = el('div', 'hours'); hrs.append(el('h4', null, 'Opening hours'));
+    const lines = (l.hours || '').split('\n').map(s => s.trim()).filter(Boolean);
+    if (!lines.length) hrs.append(el('p', 'soon', 'Opening hours coming soon.'));
+    lines.forEach(line => {
+      const i = line.indexOf(': '), r = el('div', 'hrow');
+      if (i > 0) r.append(el('span', null, line.slice(0, i)), el('span', null, line.slice(i + 2))); else r.append(el('span', null, line));
+      hrs.append(r);
+    });
+    const dir = el('a', 'btn', 'Get directions'); dir.target = '_blank'; dir.rel = 'noopener';
+    dir.href = 'https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(l.address);
+    body.append(hrs, dir); c.append(map, body); grid.append(c);
+  });
+  root.append(grid);
+}
+const aboutDlg = $('about-dlg');
+function openAboutEditor() {
+  const f = $('about-form'); f.replaceChildren(el('h3', null, 'Locations & hours'));
+  data.about.locations.forEach((l, i) => {
+    const wrap = el('fieldset', 'locedit'); wrap.append(el('legend', null, 'Location ' + (i + 1)));
+    const mkLabel = (t, input) => { const lb = el('label', null, t); lb.append(input); return lb; };
+    const n = el('input'); n.value = l.name; n.name = 'name' + i; n.required = true;
+    const a = el('input'); a.value = l.address; a.name = 'addr' + i; a.required = true;
+    const h = el('textarea'); h.rows = 7; h.value = l.hours || ''; h.name = 'hours' + i; h.placeholder = 'Monday: 7am – 3pm\nTuesday: 7am – 3pm\n…';
+    wrap.append(mkLabel('Name', n), mkLabel('Address', a), mkLabel('Opening hours (one per line, as "Day: hours")', h)); f.append(wrap);
+  });
+  const act = el('div', 'actions'); const cancel = el('button', 'ghost', 'Cancel'); cancel.type = 'button'; cancel.onclick = () => aboutDlg.close();
+  act.append(el('span', 'spacer'), cancel, el('button', null, 'Save')); f.append(act); aboutDlg.showModal();
+}
+$('about-form').onsubmit = () => {
+  const f = $('about-form');
+  data.about.locations.forEach((l, i) => { l.name = f['name' + i].value.trim(); l.address = f['addr' + i].value.trim(); l.hours = f['hours' + i].value.trim(); });
+  markDirty();
+};
+
 function render() {
+  if (!data.about) data.about = JSON.parse(JSON.stringify(DEFAULT_ABOUT));
   // showcase strip: items with images first, otherwise everything
   const all = data.sections.flatMap(s => s.items);
   let pool = all.filter(i => i.image);
@@ -76,6 +129,7 @@ function render() {
     if (!sectionOf(id)) return;
     const a = el('a', null, label); a.href = '#' + id; nav.append(a);
   });
+  const ab = el('a', null, 'About us'); ab.href = '#about'; nav.append(ab);
 
   // sections
   const main = $('menu'); main.replaceChildren();
@@ -95,6 +149,7 @@ function render() {
   $('draftstate').textContent = dirty ? '· unpublished changes' : '· no changes';
   $('btn-publish').disabled = !dirty;
   $('btn-discard').disabled = !dirty;
+  renderAbout();
   observe();
 }
 const io = 'IntersectionObserver' in window ? new IntersectionObserver(es => es.forEach(e => {
