@@ -10,175 +10,175 @@
      "name": "Zaatar",
      "price": "3.50",
      "desc": "",
-     "image": ""
+     "image": "images/items/bakery-zaatar.jpg"
     },
     {
      "id": "i002",
      "name": "Zaatar Pillow",
      "price": "4.00",
      "desc": "",
-     "image": ""
+     "image": "images/items/bakery-zaatar-pillow.jpg"
     },
     {
      "id": "i003",
      "name": "Zaatar & Cheese",
      "price": "6.50",
      "desc": "",
-     "image": ""
+     "image": "images/items/bakery-zaatar-and-cheese.jpg"
     },
     {
      "id": "i004",
      "name": "Zaatar Veggie Wrap",
      "price": "7.00",
      "desc": "kalamata olives, red onion, tomato & capsicum",
-     "image": ""
+     "image": "images/items/bakery-zaatar-veggie-wrap.jpg"
     },
     {
      "id": "i005",
      "name": "Zaatar Labne Wrap",
      "price": "8.00",
      "desc": "labne, kalamata olives, tomato & cucumber",
-     "image": ""
+     "image": "images/items/bakery-zaatar-labne-wrap.jpg"
     },
     {
      "id": "i006",
      "name": "Zaatar Special",
      "price": "8.00",
      "desc": "baby spinach, tomato, red onion & avocado",
-     "image": ""
+     "image": "images/items/bakery-zaatar-special.jpg"
     },
     {
      "id": "i007",
      "name": "Zaatar Special Chicken & Cheese",
      "price": "15.00",
      "desc": "baby spinach, tomato, red onion, avocado, tandoori chicken & halloumi cheese",
-     "image": ""
+     "image": "images/items/bakery-zaatar-special-chicken-and-cheese.jpg"
     },
     {
      "id": "i008",
      "name": "Meat Manoush",
      "price": "7.00",
      "desc": "",
-     "image": ""
+     "image": "images/items/bakery-meat-manoush.jpg"
     },
     {
      "id": "i009",
      "name": "Meat & Cheese",
      "price": "8.50",
      "desc": "",
-     "image": ""
+     "image": "images/items/bakery-meat-and-cheese.jpg"
     },
     {
      "id": "i010",
      "name": "Cheese Pie",
      "price": "7.00",
      "desc": "",
-     "image": ""
+     "image": "images/items/bakery-cheese-pie.jpg"
     },
     {
      "id": "i011",
      "name": "Open Cheese",
      "price": "8.00",
      "desc": "",
-     "image": ""
+     "image": "images/items/bakery-open-cheese.jpg"
     },
     {
      "id": "i012",
      "name": "JR's Special",
      "price": "12.50",
      "desc": "meat, cheese sujuk & BBQ sauce",
-     "image": ""
+     "image": "images/items/bakery-jrs-special.jpg"
     },
     {
      "id": "i013",
      "name": "Shanklish Boat",
      "price": "8.00",
      "desc": "fermented cheese, tomato & onion",
-     "image": ""
+     "image": "images/items/bakery-shanklish-boat.jpg"
     },
     {
      "id": "i014",
      "name": "Halloumi Hotdog",
      "price": "4.50",
      "desc": "hotdog & halloumi cheese",
-     "image": ""
+     "image": "images/items/bakery-halloumi-hotdog.jpg"
     },
     {
      "id": "i015",
      "name": "Spinach & Cheese Triangle",
      "price": "7.00",
      "desc": "baby spinach & halloumi/feta/mozzarella",
-     "image": ""
+     "image": "images/items/bakery-spinach-and-cheese-triangle.jpg"
     },
     {
      "id": "i016",
      "name": "Spinach & Sumac Triangle",
      "price": "6.00",
      "desc": "baby spinach, onion, sumac & lemon",
-     "image": ""
+     "image": "images/items/bakery-spinach-and-sumac-triangle.jpg"
     },
     {
      "id": "i017",
      "name": "Muhummara",
      "price": "5.50",
      "desc": "capsicum & tomato paste",
-     "image": ""
+     "image": "images/items/bakery-muhummara.jpg"
     },
     {
      "id": "i018",
      "name": "Muhummara & Cheese",
      "price": "7.50",
      "desc": "",
-     "image": ""
+     "image": "images/items/bakery-muhummara-and-cheese.jpg"
     },
     {
      "id": "i019",
      "name": "Cheese Bagel",
      "price": "7.50",
      "desc": "sesame bagel with sliced halloumi cheese",
-     "image": ""
+     "image": "images/items/bakery-cheese-bagel.jpg"
     },
     {
      "id": "i020",
      "name": "Cheese & Veggie Bagel",
      "price": "9.00",
      "desc": "sesame bagel with sliced halloumi cheese, capsicum, tomato & olives",
-     "image": ""
+     "image": "images/items/bakery-cheese-and-veggie-bagel.jpg"
     },
     {
      "id": "i021",
      "name": "Chicken Pocket",
      "price": "8.00",
      "desc": "tandoori chicken, mushroom & halloumi cheese",
-     "image": ""
+     "image": "images/items/bakery-chicken-pocket.jpg"
     },
     {
      "id": "i022",
      "name": "Veggie Pocket",
      "price": "8.00",
      "desc": "tomato, capsicum, olives, red onion & halloumi cheese",
-     "image": ""
+     "image": "images/items/bakery-veggie-pocket.jpg"
     },
     {
      "id": "i023",
      "name": "Sujuk Pocket",
      "price": "8.00",
      "desc": "sujuk, tomato, capsicum, olives & halloumi cheese",
-     "image": ""
+     "image": "images/items/bakery-sujuk-pocket.jpg"
     },
     {
      "id": "i024",
      "name": "Brekky Pocket",
      "price": "9.00",
      "desc": "sujuk, egg & halloumi cheese",
-     "image": ""
+     "image": "images/items/bakery-brekky-pocket.jpg"
     },
     {
      "id": "i025",
      "name": "Mega Pocket",
      "price": "11.00",
      "desc": "sujuk, chicken, mushroom, BBQ sauce, halloumi & mozzarella",
-     "image": ""
+     "image": "images/items/bakery-mega-pocket.jpg"
     }
    ]
   },
@@ -191,77 +191,77 @@
      "name": "Margherita",
      "price": "15.90",
      "desc": "tomato paste, halloumi & mozzarella cheese",
-     "image": ""
+     "image": "images/items/pizza-margherita.jpg"
     },
     {
      "id": "i027",
      "name": "Zaatar Gourmet",
      "price": "15.90",
      "desc": "zaatar base, baby spinach, sundried tomato, capsicum, red onion, mushroom & feta cheese",
-     "image": ""
+     "image": "images/items/pizza-zaatar-gourmet.jpg"
     },
     {
      "id": "i028",
      "name": "Garlic & Cheese",
      "price": "15.90",
      "desc": "garlic paste, halloumi & mozzarella cheese",
-     "image": ""
+     "image": "images/items/pizza-garlic-and-cheese.jpg"
     },
     {
      "id": "i029",
      "name": "Triple Cheese",
      "price": "15.90",
      "desc": "feta, halloumi & mozzarella cheese",
-     "image": ""
+     "image": "images/items/pizza-triple-cheese.jpg"
     },
     {
      "id": "i030",
      "name": "Labne",
      "price": "15.90",
      "desc": "labne, tomato, cucumber, olives, mint & olive oil",
-     "image": ""
+     "image": "images/items/pizza-labne.jpg"
     },
     {
      "id": "i031",
      "name": "Meat With The Lot",
      "price": "15.90",
      "desc": "meat base, capsicum, tomato, olives, red onion, mushroom, mozzarella & halloumi cheese",
-     "image": ""
+     "image": "images/items/pizza-meat-with-the-lot.jpg"
     },
     {
      "id": "i032",
      "name": "Chicken",
      "price": "15.90",
      "desc": "tandoori chicken, mushroom, mozzarella & halloumi cheese",
-     "image": ""
+     "image": "images/items/pizza-chicken.jpg"
     },
     {
      "id": "i033",
      "name": "Sujuk",
      "price": "15.90",
      "desc": "sujuk, capsicum, olives, tomato, mozzarella & halloumi cheese",
-     "image": ""
+     "image": "images/items/pizza-sujuk.jpg"
     },
     {
      "id": "i034",
      "name": "Vegetarian",
      "price": "15.90",
      "desc": "capsicum, olives, tomato, red onion, mozzarella & halloumi cheese",
-     "image": ""
+     "image": "images/items/pizza-vegetarian.jpg"
     },
     {
      "id": "i035",
      "name": "Shanklish",
      "price": "15.90",
      "desc": "fermented cheese, tomato & onion",
-     "image": ""
+     "image": "images/items/pizza-shanklish.jpg"
     },
     {
      "id": "i036",
      "name": "Zaatar and Cheese Focaccia",
      "price": "15.90",
      "desc": "double stacked zaatar pizza with halloumi & mozzarella cheese filling",
-     "image": ""
+     "image": "images/items/pizza-zaatar-and-cheese-focaccia.jpg"
     }
    ]
   },
@@ -274,112 +274,112 @@
      "name": "Plain Croissant",
      "price": "4.50",
      "desc": "",
-     "image": ""
+     "image": "images/items/sweets-plain-croissant.jpg"
     },
     {
      "id": "i038",
      "name": "Almond Croissant",
      "price": "6.50",
      "desc": "",
-     "image": ""
+     "image": "images/items/sweets-almond-croissant.jpg"
     },
     {
      "id": "i039",
      "name": "Halloumi Croissant",
      "price": "8.50",
      "desc": "",
-     "image": ""
+     "image": "images/items/sweets-halloumi-croissant.jpg"
     },
     {
      "id": "i040",
      "name": "Nutella Croissant",
      "price": "8.50",
      "desc": "",
-     "image": ""
+     "image": "images/items/sweets-nutella-croissant.jpg"
     },
     {
      "id": "i041",
      "name": "Nutella Slice",
      "price": "3.50",
      "desc": "",
-     "image": ""
+     "image": "images/items/sweets-nutella-slice.jpg"
     },
     {
      "id": "i042",
      "name": "Biscoff Slice",
      "price": "3.50",
      "desc": "",
-     "image": ""
+     "image": "images/items/sweets-biscoff-slice.jpg"
     },
     {
      "id": "i043",
      "name": "Pistachio Slice",
      "price": "3.50",
      "desc": "",
-     "image": ""
+     "image": "images/items/sweets-pistachio-slice.jpg"
     },
     {
      "id": "i044",
      "name": "Muffins",
      "price": "4.50",
      "desc": "",
-     "image": ""
+     "image": "images/items/sweets-muffins.jpg"
     },
     {
      "id": "i045",
      "name": "Cookies",
      "price": "7.00",
      "desc": "",
-     "image": ""
+     "image": "images/items/sweets-cookies.jpg"
     },
     {
      "id": "i046",
      "name": "Nutella Flower (pre-order)",
      "price": "25.00",
      "desc": "",
-     "image": ""
+     "image": "images/items/sweets-nutella-flower-pre-order.jpg"
     },
     {
      "id": "i047",
      "name": "Biscoff Flower (pre-order)",
      "price": "25.00",
      "desc": "",
-     "image": ""
+     "image": "images/items/sweets-biscoff-flower-pre-order.jpg"
     },
     {
      "id": "i048",
      "name": "Pistachio Flower (pre-order)",
      "price": "25.00",
      "desc": "",
-     "image": ""
+     "image": "images/items/sweets-pistachio-flower-pre-order.jpg"
     },
     {
      "id": "i049",
      "name": "Vegemite Flower (pre-order)",
      "price": "25.00",
      "desc": "",
-     "image": ""
+     "image": "images/items/sweets-vegemite-flower-pre-order.jpg"
     },
     {
      "id": "i050",
      "name": "Nutella Pizza",
      "price": "15.90",
      "desc": "",
-     "image": ""
+     "image": "images/items/sweets-nutella-pizza.jpg"
     },
     {
      "id": "i051",
      "name": "Biscoff Pizza",
      "price": "15.90",
      "desc": "",
-     "image": ""
+     "image": "images/items/sweets-biscoff-pizza.jpg"
     },
     {
      "id": "i052",
      "name": "Slices",
      "price": "6.00",
      "desc": "",
-     "image": ""
+     "image": "images/items/sweets-slices.jpg"
     }
    ]
   },
@@ -392,35 +392,35 @@
      "name": "Small",
      "price": "4.50",
      "desc": "",
-     "image": ""
+     "image": "images/items/coffee-small.jpg"
     },
     {
      "id": "i054",
      "name": "Medium",
      "price": "5.50",
      "desc": "",
-     "image": ""
+     "image": "images/items/coffee-medium.jpg"
     },
     {
      "id": "i055",
      "name": "Large",
      "price": "6.50",
      "desc": "",
-     "image": ""
+     "image": "images/items/coffee-large.jpg"
     },
     {
      "id": "i056",
      "name": "Alternative milk",
      "price": "1.00",
      "desc": "almond, soy, oat, lactose free",
-     "image": ""
+     "image": "images/items/coffee-alternative-milk.jpg"
     },
     {
      "id": "i057",
      "name": "Extras",
      "price": "1.00",
      "desc": "honey, white chocolate, extra shot, etc.",
-     "image": ""
+     "image": "images/items/coffee-extras.jpg"
     }
    ]
   },
@@ -433,21 +433,21 @@
      "name": "Iced Chocolate",
      "price": "8.50",
      "desc": "",
-     "image": ""
+     "image": "images/items/iced-iced-chocolate.jpg"
     },
     {
      "id": "i059",
      "name": "Iced Coffee",
      "price": "8.50",
      "desc": "",
-     "image": ""
+     "image": "images/items/iced-iced-coffee.jpg"
     },
     {
      "id": "i060",
      "name": "Iced Mocha",
      "price": "8.50",
      "desc": "",
-     "image": ""
+     "image": "images/items/iced-iced-mocha.jpg"
     }
    ]
   },
@@ -460,42 +460,42 @@
      "name": "Chocolate",
      "price": "7.50",
      "desc": "",
-     "image": ""
+     "image": "images/items/milkshakes-chocolate.jpg"
     },
     {
      "id": "i062",
      "name": "Strawberry",
      "price": "7.50",
      "desc": "",
-     "image": ""
+     "image": "images/items/milkshakes-strawberry.jpg"
     },
     {
      "id": "i063",
      "name": "Vanilla",
      "price": "7.50",
      "desc": "",
-     "image": ""
+     "image": "images/items/milkshakes-vanilla.jpg"
     },
     {
      "id": "i064",
      "name": "Blue Haven",
      "price": "7.50",
      "desc": "",
-     "image": ""
+     "image": "images/items/milkshakes-blue-haven.jpg"
     },
     {
      "id": "i065",
      "name": "Banana",
      "price": "7.50",
      "desc": "",
-     "image": ""
+     "image": "images/items/milkshakes-banana.jpg"
     },
     {
      "id": "i066",
      "name": "Caramel",
      "price": "7.50",
      "desc": "",
-     "image": ""
+     "image": "images/items/milkshakes-caramel.jpg"
     }
    ]
   }
