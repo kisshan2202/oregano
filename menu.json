@@ -29,7 +29,7 @@
     {
      "id": "i004",
      "name": "Zaatar Veggie Wrap",
-     "price": "7.00",
+     "price": "8.00",
      "desc": "kalamata olives, red onion, tomato & capsicum",
      "image": "images/items/bakery-zaatar-veggie-wrap.jpg"
     },
@@ -43,7 +43,7 @@
     {
      "id": "i006",
      "name": "Zaatar Special",
-     "price": "8.00",
+     "price": "9.00",
      "desc": "baby spinach, tomato, red onion & avocado",
      "image": "images/items/bakery-zaatar-special.jpg"
     },
@@ -99,7 +99,7 @@
     {
      "id": "i014",
      "name": "Halloumi Hotdog",
-     "price": "4.50",
+     "price": "5.00",
      "desc": "hotdog & halloumi cheese",
      "image": "images/items/bakery-halloumi-hotdog.jpg"
     },
@@ -189,77 +189,77 @@
     {
      "id": "i026",
      "name": "Margherita",
-     "price": "15.90",
+     "price": "16.90",
      "desc": "tomato paste, halloumi & mozzarella cheese",
      "image": "images/items/pizza-margherita.jpg"
     },
     {
      "id": "i027",
      "name": "Zaatar Gourmet",
-     "price": "15.90",
+     "price": "16.90",
      "desc": "zaatar base, baby spinach, sundried tomato, capsicum, red onion, mushroom & feta cheese",
      "image": "images/items/pizza-zaatar-gourmet.jpg"
     },
     {
      "id": "i028",
      "name": "Garlic & Cheese",
-     "price": "15.90",
+     "price": "16.90",
      "desc": "garlic paste, halloumi & mozzarella cheese",
      "image": "images/items/pizza-garlic-and-cheese.jpg"
     },
     {
      "id": "i029",
      "name": "Triple Cheese",
-     "price": "15.90",
+     "price": "16.90",
      "desc": "feta, halloumi & mozzarella cheese",
      "image": "images/items/pizza-triple-cheese.jpg"
     },
     {
      "id": "i030",
      "name": "Labne",
-     "price": "15.90",
+     "price": "16.90",
      "desc": "labne, tomato, cucumber, olives, mint & olive oil",
      "image": "images/items/pizza-labne.jpg"
     },
     {
      "id": "i031",
      "name": "Meat With The Lot",
-     "price": "15.90",
+     "price": "16.90",
      "desc": "meat base, capsicum, tomato, olives, red onion, mushroom, mozzarella & halloumi cheese",
      "image": "images/items/pizza-meat-with-the-lot.jpg"
     },
     {
      "id": "i032",
      "name": "Chicken",
-     "price": "15.90",
+     "price": "16.90",
      "desc": "tandoori chicken, mushroom, mozzarella & halloumi cheese",
      "image": "images/items/pizza-chicken.jpg"
     },
     {
      "id": "i033",
      "name": "Sujuk",
-     "price": "15.90",
+     "price": "16.90",
      "desc": "sujuk, capsicum, olives, tomato, mozzarella & halloumi cheese",
      "image": "images/items/pizza-sujuk.jpg"
     },
     {
      "id": "i034",
      "name": "Vegetarian",
-     "price": "15.90",
+     "price": "16.90",
      "desc": "capsicum, olives, tomato, red onion, mozzarella & halloumi cheese",
      "image": "images/items/pizza-vegetarian.jpg"
     },
     {
      "id": "i035",
      "name": "Shanklish",
-     "price": "15.90",
+     "price": "16.90",
      "desc": "fermented cheese, tomato & onion",
      "image": "images/items/pizza-shanklish.jpg"
     },
     {
      "id": "i036",
      "name": "Zaatar and Cheese Focaccia",
-     "price": "15.90",
+     "price": "16.90",
      "desc": "double stacked zaatar pizza with halloumi & mozzarella cheese filling",
      "image": "images/items/pizza-zaatar-and-cheese-focaccia.jpg"
     }
@@ -279,7 +279,7 @@
     {
      "id": "i038",
      "name": "Almond Croissant",
-     "price": "7.0",
+     "price": "7.00",
      "desc": "",
      "image": "images/items/sweets-almond-croissant.jpg"
     },
