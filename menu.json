@@ -499,5 +499,19 @@
     }
    ]
   }
- ]
+ ],
+ "about": {
+  "locations": [
+   {
+    "name": "Wollert",
+    "address": "4B Linfield Parade, Wollert VIC 3750",
+    "hours": "Monday: 5 am – 4 pm\nTuesday: 5 am – 4 pm\nWednesday: 5 am – 4 pm\nThursday: 5 am – 4 pm\nFriday: 5 am – 4 pm\nSaturday: 6 am – 3 pm\nSunday: 6 am – 3 pm"
+   },
+   {
+    "name": "Epping",
+    "address": "Shop 3/299 Harvest Home Rd, Epping VIC 3076",
+    "hours": "Monday: 5 am – 4 pm\nTuesday: 5 am – 4 pm\nWednesday: 5 am – 4 pm\nThursday: 5 am – 4 pm\nFriday: 5 am – 4 pm\nSaturday: 6 am – 3 pm\nSunday: 6 am – 3 pm"
+   }
+  ]
+ }
 }
