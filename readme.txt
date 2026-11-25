@@ -1,18 +1,17 @@
-Oregano's Bakehouse & Cafe website:  https://kisshan2202.github.io/oregano/
+Oregano's Bakehouse & Cafe website
 
 Files
 - index.html, styles.css, app.js : the site
-- menu.json                      : all menu items (name, price, description, image)
-- images/                        : logo; item photos go in images/items/
+- config.js                      : address of the admin service (see below)
+- menu.json                      : all menu items, locations and opening hours
+- images/                        : logo; item photos live in images/items/
+- admin-service/                 : small Cloud Run service that saves admin changes to this repo
 
 Editing the menu (admin mode)
-1. Create a GitHub fine-grained token: GitHub > Settings > Developer settings >
-   Personal access tokens > Fine-grained tokens. Select only this repository and
-   give it "Contents: Read and write".
-2. Open the site, click "Admin" in the footer (or add #admin to the URL), enter the admin
-   password, then paste the token the first time. The token is stored only in that browser;
-   "Exit" locks admin mode again and the password is needed to re-enter.
-3. Add / Edit / delete items. Changes are kept as a draft in your browser.
-4. Click "Publish" to save to the site. It goes live about a minute later.
+1. Deploy the admin service once (steps in admin-service/README.md) and put its URL in config.js.
+2. Open the site, click "Admin" in the footer (or add #admin to the URL) and enter the admin password.
+3. Add / edit / delete items, photos, locations and hours. Changes are kept as a draft in your browser.
+4. Click "Publish". The service commits the changes to GitHub and the site updates about a minute later.
 
-Anyone without the token can only view the menu.
+No GitHub token is needed in the browser; the token and the password are kept in Google Secret Manager.
+Anyone without the admin password can only view the menu.
