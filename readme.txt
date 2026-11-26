@@ -15,3 +15,10 @@ Editing the menu (admin mode)
 
 No GitHub token is needed in the browser; the token and the password are kept in Google Secret Manager.
 Anyone without the admin password can only view the menu.
+
+Online ordering (cart + WhatsApp)
+- Customers can add items to a cart and send the order to a store on WhatsApp.
+- It is hidden by default. To preview it, add ?order=1 to the site address
+  (for example https://kisshan2202.github.io/oregano/?order=1).
+- To switch it on for everyone, set window.OREGANO_ORDERING = true in config.js.
+- Each store's WhatsApp number is set in admin mode: Edit locations & hours.
