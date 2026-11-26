@@ -1,6 +1,9 @@
 (() => {
 const $ = id => document.getElementById(id);
 const API = String(window.OREGANO_API || '').replace(/\/$/, '');
+// Ordering (cart + WhatsApp) is hidden unless switched on in config.js or by adding ?order=1 to the address (handy for demos).
+const ORDERING = window.OREGANO_ORDERING === true || new URLSearchParams(location.search).get('order') === '1';
+document.documentElement.classList.toggle('ordering', ORDERING);
 const LS = { draft: 'oregano-draft' };
 const store = {
   get(k) { try { return localStorage.getItem(k); } catch { return null; } },
@@ -44,7 +47,7 @@ function card(item, sectionId, withAdmin, compact) {
   if (fmt(item.price)) r.append(el('span', 'price', fmt(item.price)));
   b.append(r);
   if (item.desc && !compact) b.append(el('div', 'desc', item.desc));
-  if (!compact) b.append(cartControl(item));
+  if (!compact && ORDERING) b.append(cartControl(item));
   c.append(b);
   c.tabIndex = 0; c.setAttribute('role', 'button'); c.setAttribute('aria-label', 'View ' + item.name);
   c.onclick = () => openDetail(item);
@@ -177,7 +180,7 @@ function fillDetail(dir) {
   $('d-name').textContent = it.name;
   $('d-price').textContent = fmt(it.price); $('d-price').hidden = !fmt(it.price);
   $('d-desc').textContent = it.desc || ''; $('d-desc').hidden = !it.desc;
-  $('d-cart').replaceChildren(cartControl(it, true));
+  $('d-cart').replaceChildren(...(ORDERING ? [cartControl(it, true)] : []));
   $('d-count').textContent = `${dCtx.idx + 1} / ${n}`;
   $('d-prev').hidden = $('d-next').hidden = n < 2;
   dd.style.setProperty('--dx', dir * 70 + 'px');
@@ -412,7 +415,7 @@ function cartControl(item, big) {
   w.onclick = e => e.stopPropagation(); fillCtl(w, item); return w;
 }
 function refreshCart() {
-  if (!data) return;
+  if (!data || !ORDERING) return;
   for (const id of Object.keys(cart)) if (!itemById(id)) delete cart[id];
   document.querySelectorAll('.cartctl').forEach(w => { const it = itemById(w.dataset.id); if (it) fillCtl(w, it); });
   const n = cartCount(), total = cartTotal() ;

@@ -266,3 +266,7 @@ dialog #crop-size{width:auto;margin:0;padding:8px;border-radius:8px;border:1px s
 .wa-row{margin:0 0 10px;font-size:14px;color:var(--accent)}
 .wa-row.unset{color:#e0705f}
 @media(max-width:520px){#cart{width:100vw;border-radius:0}}
+
+/* ordering is hidden unless enabled (config.js flag or ?order=1) */
+html:not(.ordering) .cart-top,html:not(.ordering) .dock,html:not(.ordering) #cart{display:none!important}
+html:not(.ordering) .topbar{padding-right:0}
