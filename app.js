@@ -1,6 +1,9 @@
 (() => {
 const $ = id => document.getElementById(id);
 const API = String(window.OREGANO_API || '').replace(/\/$/, '');
+// Ordering (cart + WhatsApp) is hidden unless switched on in config.js or by adding ?order=1 to the address (handy for demos).
+const ORDERING = window.OREGANO_ORDERING === true || new URLSearchParams(location.search).get('order') === '1';
+document.documentElement.classList.toggle('ordering', ORDERING);
 const LS = { draft: 'oregano-draft' };
 const store = {
   get(k) { try { return localStorage.getItem(k); } catch { return null; } },
@@ -44,6 +47,7 @@ function card(item, sectionId, withAdmin, compact) {
   if (fmt(item.price)) r.append(el('span', 'price', fmt(item.price)));
   b.append(r);
   if (item.desc && !compact) b.append(el('div', 'desc', item.desc));
+  if (!compact && ORDERING) b.append(cartControl(item));
   c.append(b);
   c.tabIndex = 0; c.setAttribute('role', 'button'); c.setAttribute('aria-label', 'View ' + item.name);
   c.onclick = () => openDetail(item);
@@ -58,8 +62,8 @@ function card(item, sectionId, withAdmin, compact) {
 }
 /* ---------- about us ---------- */
 const DEFAULT_ABOUT = { locations: [
-  { name: 'Wollert', address: '4B Linfield Parade, Wollert VIC 3750', hours: '' },
-  { name: 'Epping', address: 'Shop 3/299 Harvest Home Rd, Epping VIC 3076', hours: '' }
+  { name: 'Wollert', address: '4B Linfield Parade, Wollert VIC 3750', hours: '', whatsapp: '' },
+  { name: 'Epping', address: 'Shop 3/299 Harvest Home Rd, Epping VIC 3076', hours: '', whatsapp: '' }
 ] };
 function renderAbout() {
   const root = $('about'); root.replaceChildren();
@@ -74,6 +78,7 @@ function renderAbout() {
     map.loading = 'lazy'; map.title = 'Map of Oregano’s ' + l.name; map.referrerPolicy = 'no-referrer-when-downgrade';
     const body = el('div', 'loc-body');
     body.append(el('h3', null, l.name), el('p', 'addr', l.address));
+    if (admin) { const w = el('p', 'wa-row' + (waNumber(l.whatsapp) ? '' : ' unset'), '📱 WhatsApp orders: ' + (l.whatsapp ? l.whatsapp : 'not set (ordering disabled for this store)')); body.append(w); }
     const hrs = el('div', 'hours'); hrs.append(el('h4', null, 'Opening hours'));
     const lines = (l.hours || '').split('\n').map(s => s.trim()).filter(Boolean);
     if (!lines.length) hrs.append(el('p', 'soon', 'Opening hours coming soon.'));
@@ -96,15 +101,16 @@ function openAboutEditor() {
     const mkLabel = (t, input) => { const lb = el('label', null, t); lb.append(input); return lb; };
     const n = el('input'); n.value = l.name; n.name = 'name' + i; n.required = true;
     const a = el('input'); a.value = l.address; a.name = 'addr' + i; a.required = true;
+    const w = el('input'); w.value = l.whatsapp || ''; w.name = 'wa' + i; w.type = 'tel'; w.placeholder = '+61 4xx xxx xxx'; w.pattern = '\\+?[0-9 \\(\\)\\-]{8,22}'; w.title = 'Include the country code, e.g. +61 412 345 678';
     const h = el('textarea'); h.rows = 7; h.value = l.hours || ''; h.name = 'hours' + i; h.placeholder = 'Monday: 7am – 3pm\nTuesday: 7am – 3pm\n…';
-    wrap.append(mkLabel('Name', n), mkLabel('Address', a), mkLabel('Opening hours (one per line, as "Day: hours")', h)); f.append(wrap);
+    wrap.append(mkLabel('Name', n), mkLabel('Address', a), mkLabel('WhatsApp number for orders (with country code; a leading 0 is treated as Australia +61)', w), mkLabel('Opening hours (one per line, as "Day: hours")', h)); f.append(wrap);
   });
   const act = el('div', 'actions'); const cancel = el('button', 'ghost', 'Cancel'); cancel.type = 'button'; cancel.onclick = () => aboutDlg.close();
   act.append(el('span', 'spacer'), cancel, el('button', null, 'Save')); f.append(act); aboutDlg.showModal();
 }
 $('about-form').onsubmit = () => {
   const f = $('about-form');
-  data.about.locations.forEach((l, i) => { l.name = f['name' + i].value.trim(); l.address = f['addr' + i].value.trim(); l.hours = f['hours' + i].value.trim(); });
+  data.about.locations.forEach((l, i) => { l.name = f['name' + i].value.trim(); l.address = f['addr' + i].value.trim(); l.hours = f['hours' + i].value.trim(); l.whatsapp = f['wa' + i].value.trim(); });
   markDirty();
 };
 
@@ -146,6 +152,8 @@ function render() {
   $('btn-publish').disabled = !dirty;
   $('btn-discard').disabled = !dirty;
   renderAbout();
+  document.documentElement.style.setProperty('--ab', admin ? $('adminbar').offsetHeight + 'px' : '0px');
+  refreshCart();
   observe();
 }
 const io = 'IntersectionObserver' in window ? new IntersectionObserver(es => es.forEach(e => {
@@ -172,6 +180,7 @@ function fillDetail(dir) {
   $('d-name').textContent = it.name;
   $('d-price').textContent = fmt(it.price); $('d-price').hidden = !fmt(it.price);
   $('d-desc').textContent = it.desc || ''; $('d-desc').hidden = !it.desc;
+  $('d-cart').replaceChildren(...(ORDERING ? [cartControl(it, true)] : []));
   $('d-count').textContent = `${dCtx.idx + 1} / ${n}`;
   $('d-prev').hidden = $('d-next').hidden = n < 2;
   dd.style.setProperty('--dx', dir * 70 + 'px');
@@ -365,6 +374,138 @@ $('btn-logout').onclick = () => {
   if (dirty && !confirm('You have unpublished changes (they stay saved as a draft). Exit anyway?')) return;
   setSession(null); admin = false; load(true);
 };
+
+/* ---------- cart & WhatsApp order ---------- */
+const CART_KEY = 'oregano-cart', CUST_KEY = 'oregano-customer';
+let cart = {}; try { cart = JSON.parse(store.get(CART_KEY) || '{}') || {}; } catch { cart = {}; }
+let storeIdx = -1, lastCount = -1;
+const itemById = id => { for (const s of data.sections) for (const i of s.items) if (i.id === id) return i; return null; };
+const priceOf = i => { const v = String(i.price ?? '').trim(); const n = Number(v); return v !== '' && !isNaN(n) ? n : null; };
+const money = n => '$' + n.toFixed(2);
+const saveCart = () => store.set(CART_KEY, JSON.stringify(cart));
+const cartLines = () => Object.entries(cart).map(([id, q]) => ({ item: itemById(id), q })).filter(l => l.item);
+const cartCount = () => cartLines().reduce((n, l) => n + l.q, 0);
+const cartTotal = () => cartLines().reduce((n, l) => n + (priceOf(l.item) ?? 0) * l.q, 0);
+const hasUnpriced = () => cartLines().some(l => priceOf(l.item) === null);
+function setQty(id, q) { q = Math.max(0, Math.min(20, q)); q ? cart[id] = q : delete cart[id]; saveCart(); refreshCart(); }
+function waNumber(raw) {
+  let s = String(raw || '').trim(); if (!s) return '';
+  const plus = s.startsWith('+'); s = s.replace(/\D/g, ''); if (!s) return '';
+  if (!plus) { if (s.startsWith('00')) s = s.slice(2); else if (s.startsWith('0')) s = '61' + s.slice(1); }
+  return s.length >= 8 && s.length <= 15 ? s : '';
+}
+const CART_ICON = '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="20" r="1.6"/><circle cx="18" cy="20" r="1.6"/><path d="M2 3h3l2.4 12.2a1.6 1.6 0 0 0 1.6 1.3h8.6a1.6 1.6 0 0 0 1.6-1.2L21 7H6"/></svg>';
+function stepper(id, q) {
+  const s = el('div', 'step');
+  const m = el('button', null, '−'); m.type = 'button'; m.setAttribute('aria-label', 'Remove one'); m.onclick = e => { e.stopPropagation(); setQty(id, q - 1); };
+  const n = el('span', null, String(q));
+  const p = el('button', null, '+'); p.type = 'button'; p.setAttribute('aria-label', 'Add one'); p.onclick = e => { e.stopPropagation(); setQty(id, q + 1); };
+  s.append(m, n, p); return s;
+}
+function fillCtl(w, item) {
+  const q = cart[item.id] || 0; w.replaceChildren();
+  if (!q) {
+    const b = el('button', 'add', w.classList.contains('big') ? '+ Add to cart' : '+ Add'); b.type = 'button';
+    b.setAttribute('aria-label', 'Add ' + item.name + ' to cart'); b.onclick = e => { e.stopPropagation(); setQty(item.id, 1); };
+    w.append(b);
+  } else w.append(stepper(item.id, q));
+}
+function cartControl(item, big) {
+  const w = el('div', 'cartctl' + (big ? ' big' : '')); w.dataset.id = item.id;
+  w.onclick = e => e.stopPropagation(); fillCtl(w, item); return w;
+}
+function refreshCart() {
+  if (!data || !ORDERING) return;
+  for (const id of Object.keys(cart)) if (!itemById(id)) delete cart[id];
+  document.querySelectorAll('.cartctl').forEach(w => { const it = itemById(w.dataset.id); if (it) fillCtl(w, it); });
+  const n = cartCount(), total = cartTotal() ;
+  const badge = $('cart-badge'), dc = $('dock-count');
+  badge.textContent = dc.textContent = n; badge.hidden = n === 0; dc.hidden = n === 0;
+  $('dock-total').textContent = n ? money(total) + (hasUnpriced() ? '+' : '') : 'Cart empty';
+  $('dock').classList.toggle('has-items', n > 0);
+  if (n !== lastCount && lastCount !== -1) [badge, dc].forEach(b => { b.classList.remove('bump'); void b.offsetWidth; b.classList.add('bump'); });
+  lastCount = n;
+  if (cd.open) renderCartDrawer();
+  if (dd.open && dCtx) { const w = $('d-cart').firstChild; const it = dCtx.list[dCtx.idx]; if (w && it) fillCtl(w, it); }
+}
+const cd = $('cart');
+function thumb(item) { const t = el('div', 'th'); t.append(imageNode(item)); return t; }
+function showView(v) {
+  if (v === 'order' && !cartCount()) v = 'cart';
+  $('c-view-cart').hidden = v !== 'cart'; $('c-view-order').hidden = v !== 'order';
+  $('c-title').textContent = v === 'cart' ? 'Your cart' : 'Review your order';
+  if (v === 'order') buildStores();
+  renderCartDrawer();
+}
+function openCart(view) {
+  if (!cd.open) { cd.classList.remove('closing'); cd.showModal(); }
+  showView(view);
+}
+let cClosing = false;
+function closeCart() {
+  if (cClosing || !cd.open) return; cClosing = true; cd.classList.add('closing');
+  setTimeout(() => { cd.close(); cd.classList.remove('closing'); cClosing = false; }, 250);
+}
+function renderCartDrawer() {
+  const lines = cartLines(), n = cartCount();
+  const items = $('c-items'); items.replaceChildren();
+  if (!lines.length) {
+    const e = el('div', 'c-empty'); e.append(el('div', 'c-empty-icon'), el('p', null, 'Your cart is empty.'), el('p', 'muted', 'Tap “+ Add” on any item to start your order.'));
+    e.firstChild.innerHTML = CART_ICON; items.append(e);
+    if (!$('c-view-order').hidden) showView('cart');
+  }
+  lines.forEach(({ item, q }) => {
+    const row = el('div', 'line'), mid = el('div', 'mid'), p = priceOf(item);
+    mid.append(el('div', 'nm', item.name), el('div', 'sub', p === null ? 'Price at store' : money(p) + ' each'));
+    const end = el('div', 'end'); end.append(stepper(item.id, q), el('div', 'lt', p === null ? '' : money(p * q)));
+    row.append(thumb(item), mid, end); items.append(row);
+  });
+  const tot = money(cartTotal()) + (hasUnpriced() ? ' +' : '');
+  $('c-total').textContent = tot; $('c-total2').textContent = tot;
+  $('c-note').hidden = !hasUnpriced();
+  $('c-review').disabled = !n; $('c-clear').hidden = !n;
+  const sum = $('c-summary'); sum.replaceChildren();
+  lines.forEach(({ item, q }) => { const p = priceOf(item), r = el('div', 'srow'); r.append(el('span', null, `${q} × ${item.name}`), el('span', null, p === null ? 'at store' : money(p * q))); sum.append(r); });
+}
+function buildStores() {
+  const box = $('c-stores'); box.replaceChildren();
+  const locs = data.about.locations;
+  if (storeIdx < 0 || storeIdx >= locs.length) { const saved = Number(store.get('oregano-store')); storeIdx = locs[saved] && waNumber(locs[saved].whatsapp) ? saved : Math.max(0, locs.findIndex(l => waNumber(l.whatsapp))); }
+  locs.forEach((l, i) => {
+    const ok = !!waNumber(l.whatsapp);
+    const b = el('button', 'store' + (i === storeIdx ? ' on' : '') + (ok ? '' : ' off')); b.type = 'button'; b.setAttribute('aria-pressed', i === storeIdx);
+    b.append(el('span', 'dot'), (() => { const d = el('span', 'sd'); d.append(el('strong', null, l.name), el('span', null, l.address), ...(ok ? [] : [el('em', null, 'Online ordering not available yet')])); return d; })());
+    b.onclick = () => { storeIdx = i; store.set('oregano-store', String(i)); buildStores(); };
+    box.append(b);
+  });
+  $('c-err').textContent = '';
+  const c = (() => { try { return JSON.parse(store.get(CUST_KEY) || '{}'); } catch { return {}; } })();
+  if (!$('c-name').value && c.name) $('c-name').value = c.name;
+}
+$('c-view-order').onsubmit = e => {
+  e.preventDefault();
+  const loc = data.about.locations[storeIdx], num = loc && waNumber(loc.whatsapp), name = $('c-name').value.trim(), notes = $('c-notes').value.trim();
+  if (!loc) { $('c-err').textContent = 'Please choose a store.'; return; }
+  if (!num) { $('c-err').textContent = loc.name + ' can’t take online orders yet. Please choose another store.'; return; }
+  if (!name) { $('c-err').textContent = 'Please enter your name.'; $('c-name').focus(); return; }
+  const lines = cartLines().map(({ item, q }) => { const p = priceOf(item); return `${q} × ${item.name} — ${p === null ? 'price at store' : money(p * q)}`; });
+  const text = [`*New order — Oregano’s Bakehouse & Cafe*`, `Store: ${loc.name}`, `Name: ${name}`, '', ...lines, '', `*Total: ${money(cartTotal())}${hasUnpriced() ? ' + items priced at store' : ''}*`, ...(notes ? ['', `Notes: ${notes}`] : [])].join('\n');
+  store.set(CUST_KEY, JSON.stringify({ name }));
+  const url = `https://wa.me/${num}?text=${encodeURIComponent(text)}`;
+  const w = window.open(url, '_blank', 'noopener'); if (!w) location.href = url;
+  toast('Opening WhatsApp… tap Send there to place your order.');
+};
+$('c-review').onclick = () => showView('order');
+$('c-back').onclick = () => showView('cart');
+$('c-clear').onclick = () => { if (confirm('Remove everything from your cart?')) { cart = {}; saveCart(); refreshCart(); } };
+$('c-close').onclick = closeCart;
+cd.addEventListener('cancel', e => { e.preventDefault(); closeCart(); });
+cd.addEventListener('click', e => { const r = cd.getBoundingClientRect(); if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) closeCart(); });
+$('cart-top').onclick = () => openCart('cart');
+$('dock-cart').onclick = () => openCart('cart');
+$('dock-order').onclick = () => openCart(cartCount() ? 'order' : 'cart');
+document.querySelectorAll('.ci').forEach(e => { e.innerHTML = CART_ICON; });
+window.addEventListener('resize', () => document.documentElement.style.setProperty('--ab', admin ? $('adminbar').offsetHeight + 'px' : '0px'));
 
 /* ---------- load ---------- */
 async function load(ignoreDraft) {

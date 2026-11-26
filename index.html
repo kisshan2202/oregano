@@ -18,7 +18,10 @@
   <div class="marquee"><div class="track" id="track"></div></div>
 </section>
 
-<nav id="nav"></nav>
+<div class="topbar">
+  <nav id="nav"></nav>
+  <button class="cart-top" id="cart-top" aria-label="Open your cart" title="Your cart"><span class="ci"></span><span class="badge" id="cart-badge" hidden>0</span></button>
+</div>
 <main id="menu"><p class="loading">Loading menu…</p></main>
 
 <section id="about" class="about"></section>
@@ -73,6 +76,41 @@
   </form>
 </dialog>
 
+<div class="dock" id="dock">
+  <button class="dock-cart" id="dock-cart" aria-label="Open your cart"><span class="ci"></span><span class="dock-count" id="dock-count" hidden>0</span><span class="dock-total" id="dock-total">Cart empty</span></button>
+  <button class="dock-order" id="dock-order">Order <span aria-hidden="true">→</span></button>
+</div>
+
+<dialog id="cart" aria-label="Your order">
+  <header class="c-head"><h3 id="c-title">Your cart</h3><button class="c-close" id="c-close" aria-label="Close">✕</button></header>
+  <div id="c-view-cart">
+    <div class="c-body"><div id="c-items"></div></div>
+    <div class="c-foot">
+      <p class="c-note" id="c-note" hidden>Some items are priced at the store, so the total is a minimum.</p>
+      <div class="c-total"><span>Total</span><strong id="c-total">$0.00</strong></div>
+      <button type="button" id="c-review" class="big-btn">Review order →</button>
+      <button type="button" class="ghost" id="c-clear">Clear cart</button>
+    </div>
+  </div>
+  <form id="c-view-order" hidden novalidate>
+    <div class="c-body">
+      <button type="button" class="back" id="c-back">← Back to cart</button>
+      <h4>Your order</h4>
+      <div id="c-summary" class="summary"></div>
+      <h4>Choose your store</h4>
+      <div id="c-stores" class="stores"></div>
+      <label>Your name<input id="c-name" maxlength="60" autocomplete="name"></label>
+      <label>Notes (optional)<textarea id="c-notes" rows="3" maxlength="300" placeholder="Allergies, special requests…"></textarea></label>
+      <p class="err" id="c-err"></p>
+    </div>
+    <div class="c-foot">
+      <div class="c-total"><span>Total</span><strong id="c-total2">$0.00</strong></div>
+      <button class="big-btn wa" id="c-send">Send order on WhatsApp</button>
+      <p class="c-hint">WhatsApp opens with your order ready to send. The order is placed when you tap Send.</p>
+    </div>
+  </form>
+</dialog>
+
 <dialog id="detail" aria-label="Item details">
   <button class="d-close" id="d-close" aria-label="Close">✕</button>
   <div class="d-imgwrap">
@@ -85,6 +123,7 @@
     <h3 id="d-name"></h3>
     <div class="d-price" id="d-price"></div>
     <p id="d-desc"></p>
+    <div class="d-cart" id="d-cart"></div>
     <div class="d-count" id="d-count"></div>
   </div>
 </dialog>
