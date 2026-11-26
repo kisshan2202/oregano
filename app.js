@@ -399,6 +399,7 @@ function waNumber(raw) {
   let s = String(raw || '').trim(); if (!s) return '';
   const plus = s.startsWith('+'); s = s.replace(/\D/g, ''); if (!s) return '';
   if (!plus) { if (s.startsWith('00')) s = s.slice(2); else if (s.startsWith('0')) s = '61' + s.slice(1); }
+  if (/^610\d{9}$/.test(s)) s = '61' + s.slice(3); // +61 0412… -> 61412… (drop the extra 0)
   return s.length >= 8 && s.length <= 15 ? s : '';
 }
 const CART_ICON = '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="20" r="1.6"/><circle cx="18" cy="20" r="1.6"/><path d="M2 3h3l2.4 12.2a1.6 1.6 0 0 0 1.6 1.3h8.6a1.6 1.6 0 0 0 1.6-1.2L21 7H6"/></svg>';
