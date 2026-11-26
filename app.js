@@ -61,6 +61,7 @@ function card(item, sectionId, withAdmin, compact) {
   return c;
 }
 /* ---------- about us ---------- */
+const DEFAULT_TAGLINE = 'Epping - Wollert';
 const DEFAULT_ABOUT = { locations: [
   { name: 'Wollert', address: '4B Linfield Parade, Wollert VIC 3750', hours: '', whatsapp: '' },
   { name: 'Epping', address: 'Shop 3/299 Harvest Home Rd, Epping VIC 3076', hours: '', whatsapp: '' }
@@ -93,6 +94,10 @@ function renderAbout() {
   });
   root.append(grid);
 }
+const tagDlg = $('tag-dlg');
+function openTagEditor() { $('tag-input').value = data.tagline ?? DEFAULT_TAGLINE; tagDlg.showModal(); }
+$('tag-cancel').onclick = () => tagDlg.close();
+$('tag-form').onsubmit = () => { data.tagline = $('tag-input').value.trim(); markDirty(); };
 const aboutDlg = $('about-dlg');
 function openAboutEditor() {
   const f = $('about-form'); f.replaceChildren(el('h3', null, 'Locations & hours'));
@@ -151,6 +156,8 @@ function render() {
   $('draftstate').textContent = dirty ? '· unpublished changes' : '· no changes';
   $('btn-publish').disabled = !dirty;
   $('btn-discard').disabled = !dirty;
+  const tg = $('tagline'); tg.replaceChildren(document.createTextNode(data.tagline ?? DEFAULT_TAGLINE));
+  if (admin) { const eb = el('button', 'ghost tag-edit', '✎ Edit'); eb.type = 'button'; eb.onclick = openTagEditor; tg.append(' ', eb); }
   renderAbout();
   document.documentElement.style.setProperty('--ab', admin ? $('adminbar').offsetHeight + 'px' : '0px');
   refreshCart();

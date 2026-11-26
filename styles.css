@@ -270,3 +270,5 @@ dialog #crop-size{width:auto;margin:0;padding:8px;border-radius:8px;border:1px s
 /* ordering is hidden unless enabled (config.js flag or ?order=1) */
 html:not(.ordering) .cart-top,html:not(.ordering) .dock,html:not(.ordering) #cart{display:none!important}
 html:not(.ordering) .topbar{padding-right:0}
+
+.tag-edit{margin-left:8px;min-height:32px;padding:2px 12px;font-size:12px;letter-spacing:0;text-transform:none;vertical-align:middle}
