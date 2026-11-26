@@ -4,14 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#4a352c">
-<title>Oregano's Bakehouse &amp; Cafe – Wollert</title>
-<meta name="description" content="Oregano's Bakehouse & Cafe in Wollert: fresh zaatar manoush, pizzas, pockets, sweets and coffee.">
+<title>Oregano's Bakehouse &amp; Cafe – Epping &amp; Wollert</title>
+<meta name="description" content="Oregano's Bakehouse & Cafe in Epping and Wollert: fresh zaatar manoush, pizzas, pockets, sweets and coffee.">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 <header class="banner">
   <h1 class="logo"><img src="images/oreganos-logo-transparent.svg" width="651" height="307" alt="Oregano’s Bakehouse &amp; Cafe"></h1>
-  <div class="sub">Wollert</div>
+  <div class="sub" id="tagline"></div>
 </header>
 
 <section class="showcase" aria-label="Menu highlights">
@@ -25,6 +25,12 @@
 <main id="menu"><p class="loading">Loading menu…</p></main>
 
 <section id="about" class="about"></section>
+
+<dialog id="tag-dlg"><form method="dialog" id="tag-form">
+  <h3>Text under the logo</h3>
+  <label>Shown on the main page below the logo<input id="tag-input" maxlength="60" placeholder="Epping - Wollert"></label>
+  <div class="actions"><span class="spacer"></span><button type="button" class="ghost" id="tag-cancel">Cancel</button><button>Save</button></div>
+</form></dialog>
 
 <dialog id="about-dlg"><form method="dialog" id="about-form"></form></dialog>
 
