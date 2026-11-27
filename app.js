@@ -1,6 +1,7 @@
 (() => {
 const $ = id => document.getElementById(id);
-const API = String(window.OREGANO_API || '').replace(/\/$/, '');
+// On Cloud Run the site and the admin API share one address (config.js is served with OREGANO_SAME_ORIGIN set); otherwise use the separate service URL.
+const API = window.OREGANO_SAME_ORIGIN ? '/api' : String(window.OREGANO_API || '').replace(/\/$/, '');
 // Ordering (cart + WhatsApp) is hidden unless switched on in config.js or by adding ?order=1 to the address (handy for demos).
 const ORDERING = window.OREGANO_ORDERING === true || new URLSearchParams(location.search).get('order') === '1';
 document.documentElement.classList.toggle('ordering', ORDERING);
@@ -345,7 +346,7 @@ async function publish() {
     const res = await call('/publish', { menu: out, images, deletes: [...deletes].filter(p => !keep.has(p)) }, getSession());
     out.updated = res.updated || out.updated;
     data = out; dirty = false; deletes = new Set(); store.del(LS.draft);
-    toast('Published! The live site updates in about a minute.');
+    toast('Published! The live site updates in a few minutes.');
   } catch (e) {
     if (e.status === 401) { setSession(null); admin = false; toast('Session expired. Sign in again; your changes are kept as a draft.'); }
     else toast('Publish failed: ' + e.message);

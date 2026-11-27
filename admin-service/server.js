@@ -114,7 +114,7 @@ async function publish(body) {
 }
 
 /* ---- server ---- */
-const server = http.createServer(async (req, res) => {
+const handle = async (req, res) => {
   const origin = req.headers.origin;
   const allowed = origin && (ORIGINS.includes('*') || ORIGINS.includes(origin));
   const send = (status, obj) => {
@@ -151,5 +151,6 @@ const server = http.createServer(async (req, res) => {
     if (e instanceof HttpError) return send(e.status, { error: e.message });
     console.error(e); return send(500, { error: 'Server error.' });
   }
-});
-server.listen(PORT, () => console.log('oregano-admin listening on', PORT));
+};
+module.exports = { handle };
+if (require.main === module) http.createServer(handle).listen(PORT, () => console.log('oregano-admin listening on', PORT));

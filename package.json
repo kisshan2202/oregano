@@ -1,0 +1,9 @@
+{
+  "name": "oregano-site",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Oregano's Bakehouse & Cafe: website plus admin API in one Cloud Run service",
+  "main": "server.js",
+  "scripts": { "start": "node server.js" },
+  "engines": { "node": ">=20" }
+}

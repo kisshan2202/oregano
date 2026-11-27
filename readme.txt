@@ -5,7 +5,8 @@ Files
 - config.js                      : address of the admin service (see below)
 - menu.json                      : all menu items, locations and opening hours
 - images/                        : logo; item photos live in images/items/
-- admin-service/                 : small Cloud Run service that saves admin changes to this repo
+- admin-service/                 : admin API (password login + commits menu changes to this repo)
+- server.js, package.json        : one server for Cloud Run: serves the site and the admin API (see deploy-cloud-run.md)
 
 Editing the menu (admin mode)
 1. Deploy the admin service once (steps in admin-service/README.md) and put its URL in config.js.
