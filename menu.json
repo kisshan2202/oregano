@@ -388,6 +388,13 @@
    "title": "Coffee",
    "items": [
     {
+     "id": "imwzvqinkas0x",
+     "name": "Small",
+     "price": "4.50",
+     "desc": "",
+     "image": "images/items/imwzvqinkas0x-mwzvqjst.jpg"
+    },
+    {
      "id": "i054",
      "name": "Medium",
      "price": "5.50",
@@ -414,13 +421,6 @@
      "price": "1.00",
      "desc": "honey, white chocolate, extra shot, etc.",
      "image": "images/items/coffee-extras.jpg"
-    },
-    {
-     "id": "imwzvqinkas0x",
-     "name": "Small",
-     "price": "4.50",
-     "desc": "",
-     "image": "images/items/imwzvqinkas0x-mwzvqjst.jpg"
     }
    ]
   },
