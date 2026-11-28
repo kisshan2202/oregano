@@ -377,9 +377,9 @@
     {
      "id": "i052",
      "name": "Slices",
-     "price": "6.00",
+     "price": "8.50",
      "desc": "",
-     "image": "images/items/sweets-slices.jpg"
+     "image": "images/items/i052-mwzvo487.jpg"
     }
    ]
   },
@@ -388,25 +388,18 @@
    "title": "Coffee",
    "items": [
     {
-     "id": "i053",
-     "name": "Small",
-     "price": "4.50",
-     "desc": "",
-     "image": "images/items/coffee-small.jpg"
-    },
-    {
      "id": "i054",
      "name": "Medium",
      "price": "5.50",
      "desc": "",
-     "image": "images/items/coffee-medium.jpg"
+     "image": "images/items/i054-mwzvo487.jpg"
     },
     {
      "id": "i055",
      "name": "Large",
      "price": "6.50",
      "desc": "",
-     "image": "images/items/coffee-large.jpg"
+     "image": "images/items/i055-mwzvo487.jpg"
     },
     {
      "id": "i056",
@@ -421,6 +414,13 @@
      "price": "1.00",
      "desc": "honey, white chocolate, extra shot, etc.",
      "image": "images/items/coffee-extras.jpg"
+    },
+    {
+     "id": "imwzvqinkas0x",
+     "name": "Small",
+     "price": "4.50",
+     "desc": "",
+     "image": "images/items/imwzvqinkas0x-mwzvqjst.jpg"
     }
    ]
   },
@@ -516,5 +516,6 @@
    }
   ]
  },
- "tagline": "Epping - Wollert"
+ "tagline": "Epping - Wollert",
+ "footerText": "Menu as of November 2026 · Prices in AUD and subject to change. © 2026 Oregano’s Bakehouse & Cafe. All rights reserved."
 }
