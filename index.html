@@ -26,6 +26,13 @@
 
 <section id="about" class="about"></section>
 
+<dialog id="foot-dlg"><form method="dialog" id="foot-form">
+  <h3>Footer text</h3>
+  <label>Shown at the very bottom of every page<textarea id="foot-input" rows="3" maxlength="200" placeholder="Menu as of November 2026 · Prices in AUD and subject to change"></textarea></label>
+  <p class="muted" style="font-size:13px;margin:0 0 6px">Leave it empty to go back to the automatic text (menu date + "Prices in AUD and subject to change").</p>
+  <div class="actions"><span class="spacer"></span><button type="button" class="ghost" id="foot-cancel">Cancel</button><button>Save</button></div>
+</form></dialog>
+
 <dialog id="tag-dlg"><form method="dialog" id="tag-form">
   <h3>Text under the logo</h3>
   <label>Shown on the main page below the logo<input id="tag-input" maxlength="60" placeholder="Epping - Wollert"></label>
@@ -35,8 +42,7 @@
 <dialog id="about-dlg"><form method="dialog" id="about-form"></form></dialog>
 
 <footer>
-  <span id="updated"></span> · Prices in AUD and subject to change ·
-  <a href="#admin" id="admin-link">Admin</a>
+  <span id="footer-text">Prices in AUD and subject to change</span>
 </footer>
 
 <div id="adminbar" hidden>

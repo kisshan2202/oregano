@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Loading…</title>
+</head>
+<body style="margin:0;background:#5c4841">
+<script>
+  // Hidden entry point to the admin sign-in. Nothing on the public pages links here.
+  try { sessionStorage.setItem('oregano-admin-entry', '1'); } catch (e) {}
+  location.replace('./');
+</script>
+<noscript><a href="./" style="color:#fff7ec">Continue</a></noscript>
+</body>
+</html>
