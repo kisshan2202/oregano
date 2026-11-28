@@ -117,7 +117,7 @@ a.btn:hover{transform:translateY(-2px)}
 fieldset.locedit{border:1px solid var(--line);border-radius:10px;margin:10px 0;padding:6px 12px 10px}
 fieldset.locedit legend{color:var(--accent);font-size:13px;padding:0 6px}
 footer a{display:inline-block;padding:12px 10px}
-footer{text-align:center;color:var(--muted);font-size:13px;padding:16px 16px calc(80px + env(safe-area-inset-bottom));border-top:1px solid var(--line)}
+footer{text-align:center;color:var(--muted);font-size:13px;padding:16px 16px calc(80px + var(--ab,0px) + env(safe-area-inset-bottom));border-top:1px solid var(--line)}
 
 /* admin */
 .editbtns{position:absolute;top:8px;right:8px;display:flex;gap:6px}
@@ -272,3 +272,11 @@ html:not(.ordering) .cart-top,html:not(.ordering) .dock,html:not(.ordering) #car
 html:not(.ordering) .topbar{padding-right:0}
 
 .tag-edit{margin-left:8px;min-height:32px;padding:2px 12px;font-size:12px;letter-spacing:0;text-transform:none;vertical-align:middle}
+
+/* admin: drag handle + confirm popup */
+.drag{position:absolute;top:8px;left:8px;min-height:36px;min-width:36px;padding:0;font-size:20px;line-height:1;background:rgba(30,20,15,.85);color:var(--ink);cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none}
+.card.dragging{opacity:.85;outline:3px dashed var(--accent);outline-offset:2px;transform:scale(1.03);z-index:5;box-shadow:0 16px 34px rgba(0,0,0,.5)}
+body.is-dragging,body.is-dragging *{cursor:grabbing!important;user-select:none;-webkit-user-select:none}
+body.is-dragging .card:hover{transform:none}
+#confirm-dlg p{margin:0;line-height:1.45}
+.danger-fill{background:var(--danger);color:#fff;border-color:var(--danger)}

@@ -58,6 +58,10 @@ function card(item, sectionId, withAdmin, compact) {
     const e = el('button', null, 'Edit'); e.onclick = ev => { ev.stopPropagation(); openEditor(sectionId, item); };
     const d = el('button', 'del', '✕'); d.title = 'Delete'; d.onclick = ev => { ev.stopPropagation(); removeItem(sectionId, item); };
     t.append(e, d); c.append(t);
+    const h = el('button', 'drag', '⠿'); h.type = 'button'; h.title = 'Drag to reorder'; h.setAttribute('aria-label', 'Drag to reorder ' + item.name);
+    h.onclick = ev => ev.stopPropagation();
+    h.onpointerdown = ev => startDrag(ev, c, sectionId, item.id);
+    c.dataset.id = item.id; c.append(h);
   }
   return c;
 }
@@ -170,6 +174,7 @@ function render() {
   refreshCart();
   observe();
 }
+addEventListener('resize', () => { if (admin) document.documentElement.style.setProperty('--ab', $('adminbar').offsetHeight + 'px'); });
 const io = 'IntersectionObserver' in window ? new IntersectionObserver(es => es.forEach(e => {
   if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
 }), { threshold: .08 }) : null;
@@ -231,8 +236,48 @@ function markDirty() {
 }
 const sectionOf = id => data.sections.find(s => s.id === id);
 const trackDelete = p => { if (p && p.startsWith('images/items/')) deletes.add(p); };
-function removeItem(sid, item) {
-  if (!confirm(`Delete "${item.name}"?`)) return;
+/* styled confirmation popup */
+const cfm = $('confirm-dlg');
+function askConfirm(title, message, okLabel) {
+  return new Promise(res => {
+    $('cfm-title').textContent = title; $('cfm-msg').textContent = message; $('cfm-ok').textContent = okLabel || 'Delete';
+    const done = v => { cfm.onclose = null; if (cfm.open) cfm.close(); res(v); };
+    $('cfm-ok').onclick = () => done(true);
+    $('cfm-cancel').onclick = () => done(false);
+    cfm.oncancel = () => done(false);
+    cfm.showModal(); $('cfm-cancel').focus();
+  });
+}
+/* drag and drop reordering (mouse, pen and touch) */
+function startDrag(ev, card, sid, id) {
+  if (ev.button > 0) return;
+  ev.preventDefault(); ev.stopPropagation();
+  const grid = card.parentElement; let raf = 0, y = ev.clientY, x = ev.clientX;
+  card.classList.add('dragging'); document.body.classList.add('is-dragging');
+  const step = () => {
+    const hit = document.elementFromPoint(x, y), over = hit && hit.closest('.gallery .card[data-id]');
+    if (over && over !== card && over.parentElement === grid) {
+      const before = over.compareDocumentPosition(card) & Node.DOCUMENT_POSITION_FOLLOWING;
+      // moving up/left puts the card before the target, moving down/right puts it after
+      grid.insertBefore(card, before ? over : over.nextSibling);
+    }
+    const m = 70; if (y < m) scrollBy(0, -(m - y) / 3); else if (y > innerHeight - m) scrollBy(0, (y - (innerHeight - m)) / 3);
+    raf = requestAnimationFrame(step);
+  };
+  raf = requestAnimationFrame(step);
+  const move = e => { x = e.clientX; y = e.clientY; };
+  const end = e => {
+    cancelAnimationFrame(raf); removeEventListener('pointermove', move); removeEventListener('pointerup', end); removeEventListener('pointercancel', end);
+    card.classList.remove('dragging'); document.body.classList.remove('is-dragging');
+    const s = sectionOf(sid), order = [...grid.querySelectorAll(':scope > .card[data-id]')].map(c => c.dataset.id);
+    const next = order.map(i => s.items.find(it => it.id === i)).filter(Boolean);
+    if (e.type !== 'pointercancel' && next.length === s.items.length && next.some((it, i) => it !== s.items[i])) { s.items = next; markDirty(); toast('Order changed. Publish to save it.'); }
+    else render();
+  };
+  addEventListener('pointermove', move); addEventListener('pointerup', end); addEventListener('pointercancel', end);
+}
+async function removeItem(sid, item) {
+  if (!await askConfirm(`Delete "${item.name}"?`, 'This removes the item and its photo from the menu once you publish. You can still use Discard changes before publishing.', 'Delete')) return;
   trackDelete(item.image);
   const s = sectionOf(sid); s.items = s.items.filter(i => i.id !== item.id); markDirty();
 }
