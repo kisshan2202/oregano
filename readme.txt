@@ -10,7 +10,7 @@ Files
 
 Editing the menu (admin mode)
 1. Deploy the admin service once (steps in admin-service/README.md) and put its URL in config.js.
-2. Open the site, click "Admin" in the footer (or add #admin to the URL) and enter the admin password.
+2. Open the hidden admin page: your website address followed by /oregano.html (nothing on the site links to it). Enter the admin password.
 3. Add / edit / delete items, photos, locations and hours. Changes are kept as a draft in your browser.
 4. Click "Publish". The service commits the changes to GitHub and the site updates about a minute later.
 

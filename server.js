@@ -15,7 +15,7 @@ if (!api) console.warn('GITHUB_TOKEN / ADMIN_PASSWORD not set: serving the site 
 
 const TYPES = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.json': 'application/json; charset=utf-8', '.svg': 'image/svg+xml', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.png': 'image/png', '.webp': 'image/webp', '.ico': 'image/x-icon' };
 const COMPRESSIBLE = new Set(['.html', '.css', '.js', '.json', '.svg']);
-const PUBLIC_FILES = new Set(['/index.html', '/styles.css', '/app.js', '/config.js', '/menu.json', '/favicon.ico']);
+const PUBLIC_FILES = new Set(['/index.html', '/oregano.html', '/styles.css', '/app.js', '/config.js', '/menu.json', '/favicon.ico']);
 const isPublic = p => p === '/index.html' || PUBLIC_FILES.has(p) || /^\/images\/[A-Za-z0-9._\/-]+$/.test(p);
 const SECURITY = { 'X-Content-Type-Options': 'nosniff', 'Referrer-Policy': 'strict-origin-when-cross-origin', 'X-Frame-Options': 'SAMEORIGIN' };
 

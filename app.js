@@ -95,6 +95,11 @@ function renderAbout() {
   });
   root.append(grid);
 }
+const defaultFooter = () => (data.updated ? 'Menu as of ' + data.updated + ' · ' : '') + 'Prices in AUD and subject to change';
+const footDlg = $('foot-dlg');
+function openFootEditor() { $('foot-input').value = data.footerText || defaultFooter(); footDlg.showModal(); }
+$('foot-cancel').onclick = () => footDlg.close();
+$('foot-form').onsubmit = () => { const v = $('foot-input').value.trim(); if (v && v === defaultFooter()) delete data.footerText; else if (v) data.footerText = v; else delete data.footerText; markDirty(); };
 const tagDlg = $('tag-dlg');
 function openTagEditor() { $('tag-input').value = data.tagline ?? DEFAULT_TAGLINE; tagDlg.showModal(); }
 $('tag-cancel').onclick = () => tagDlg.close();
@@ -152,7 +157,8 @@ function render() {
     s.items.forEach(i => g.append(card(i, s.id, admin)));
     sec.append(g); main.append(sec);
   });
-  $('updated').textContent = data.updated ? 'Menu as of ' + data.updated : '';
+  const ft = $('footer-text'); ft.replaceChildren(document.createTextNode(data.footerText || defaultFooter()));
+  if (admin) { const fb = el('button', 'ghost tag-edit', '✎ Edit'); fb.type = 'button'; fb.onclick = openFootEditor; ft.append(' ', fb); }
   $('adminbar').hidden = !admin;
   $('draftstate').textContent = dirty ? '· unpublished changes' : '· no changes';
   $('btn-publish').disabled = !dirty;
@@ -377,7 +383,6 @@ $('pw-form').onsubmit = async e => {
   } catch (err) { $('pw-err').textContent = err.message; }
   btn.disabled = false;
 };
-$('admin-link').onclick = e => { e.preventDefault(); openLogin(); };
 $('btn-logout').onclick = () => {
   if (dirty && !confirm('You have unpublished changes (they stay saved as a draft). Exit anyway?')) return;
   setSession(null); admin = false; load(true);
@@ -527,7 +532,9 @@ async function load(ignoreDraft) {
       if (ignoreDraft) { dirty = false; }
     }
     render();
-    if (location.hash === '#admin') openLogin();
+    // The admin sign-in is reached only through the hidden page oregano.html, which sets this flag and redirects here.
+    let entry = false; try { entry = sessionStorage.getItem('oregano-admin-entry') === '1'; sessionStorage.removeItem('oregano-admin-entry'); } catch {}
+    if (entry) openLogin();
   } catch { $('menu').innerHTML = '<p class="loading">Sorry, the menu could not be loaded. Please refresh.</p>'; }
 }
 load();

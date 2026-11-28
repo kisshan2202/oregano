@@ -69,7 +69,7 @@ window.OREGANO_API = 'https://oregano-admin-xxxxx-ts.a.run.app';
 
 ## Day-to-day
 
-- Open the site, click **Admin** in the footer, enter the admin password, edit, then **Publish**.
+- Open the hidden admin page (your website address followed by `/oregano.html`), enter the admin password, edit, then **Publish**.
 - Old photos are deleted automatically when you replace or remove them.
 
 ## Changing things later
